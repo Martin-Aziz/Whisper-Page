@@ -1,5 +1,4 @@
 /// <reference types="vitest/globals" />
-/// <reference types="@testing-library/jest-dom" />
 import "@testing-library/jest-dom";
 
 // Mock Tauri APIs — not available in jsdom test environment

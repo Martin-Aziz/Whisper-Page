@@ -13,7 +13,7 @@ import { useFileOperations } from "./useFileOperations";
  *  - Cmd/Ctrl + P      → Export PDF modal
  *  - Cmd/Ctrl + \      → Toggle sidebar
  *  - Cmd/Ctrl + Shift + F → Toggle focus mode
- *  - Cmd/Ctrl + E      → Toggle source / WYSIWYG mode
+ *  - Cmd/Ctrl + E      → Toggle source / Rich Text mode
  *  - F11               → Toggle fullscreen
  */
 export function useKeyboardShortcuts() {
@@ -75,7 +75,7 @@ export function useKeyboardShortcuts() {
     }
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => { window.removeEventListener("keydown", handleKeyDown); };
   }, [
     newFile,
     openFile,

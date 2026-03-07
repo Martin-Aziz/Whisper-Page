@@ -7,15 +7,46 @@ marked.use({
   breaks: false,
 });
 
+// Web Worker instance for markdown parsing
+// Vite handles this URL syntax for worker bundling.
+const worker = new Worker(
+  new URL("../workers/markdownWorker.ts", import.meta.url),
+  { type: "module" }
+);
+
 /**
- * Converts markdown source text to sanitized HTML.
+ * Converts markdown source text to sanitized HTML asynchronously using a Web Worker.
+ * This prevents the main UI thread from blocking on large files.
  *
  * @param markdown - Raw markdown string from the editor
- * @returns Safe HTML string (XSS-sanitised via DOMPurify)
- *
- * @security Output is sanitised with DOMPurify before use in innerHTML.
- *   Never render the raw output without sanitisation.
- * @performance Synchronous; runs in about 1–3ms for typical documents.
+ * @returns Promise resolving to safe HTML string
+ */
+export function markdownToHtmlAsync(markdown: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const handleMessage = (event: MessageEvent) => {
+      const { html, error, success } = event.data as { html: string; error: string; success: boolean };
+      worker.removeEventListener("message", handleMessage);
+
+      if (success) {
+        // Sanitize on the main thread where DOMPurify has access to the DOM
+        const sanitized = DOMPurify.sanitize(html, {
+          ADD_TAGS: ["math", "semantics", "mrow", "mi", "mo", "mn", "msup"],
+          ADD_ATTR: ["class", "style", "xmlns"],
+        });
+        resolve(sanitized);
+      } else {
+        reject(new Error(error || "Worker failed"));
+      }
+    };
+
+    worker.addEventListener("message", handleMessage);
+    worker.postMessage(markdown);
+  });
+}
+
+/**
+ * Converts markdown source text to sanitized HTML synchronously.
+ * Fallback for environments or specific use cases where async isn't ideal.
  */
 export function markdownToHtml(markdown: string): string {
   const rawHtml = marked.parse(markdown) as string;
@@ -94,5 +125,5 @@ export function countWords(markdown: string): number {
 export function estimateReadingTime(markdown: string): string {
   const words = countWords(markdown);
   const minutes = Math.max(1, Math.ceil(words / 238));
-  return `${minutes} min read`;
+  return String(minutes) + " min read";
 }

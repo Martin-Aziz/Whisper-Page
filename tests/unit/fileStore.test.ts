@@ -90,8 +90,8 @@ describe("useFileStore", () => {
     it("caps recent files at 20 entries", () => {
       for (let i = 0; i < 25; i++) {
         useFileStore.getState().addRecentFile({
-          path: `/file-${i}.md`,
-          name: `file-${i}.md`,
+          path: "/file-" + String(i) + ".md",
+          name: "file-" + String(i) + ".md",
           lastOpened: i,
         });
       }

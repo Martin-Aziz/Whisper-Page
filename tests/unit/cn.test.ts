@@ -20,12 +20,12 @@ describe("cn (class name utility)", () => {
   });
 
   it("handles conditional classes", () => {
-    const isActive = true;
+    const isActive = true as boolean;
     expect(cn("base", isActive && "active")).toBe("base active");
   });
 
   it("handles false conditional classes", () => {
-    const isActive = false;
+    const isActive = false as boolean;
     expect(cn("base", isActive && "active")).toBe("base");
   });
 

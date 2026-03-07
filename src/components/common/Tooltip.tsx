@@ -1,4 +1,5 @@
-import { ReactNode, useState, useRef, useEffect } from "react";
+import type { ReactNode} from "react";
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/utils/cn";
 
 type TooltipPlacement = "top" | "bottom" | "left" | "right";
@@ -32,7 +33,7 @@ export default function Tooltip({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function show() {
-    timeoutRef.current = setTimeout(() => setVisible(true), 400);
+    timeoutRef.current = setTimeout(() => { setVisible(true); }, 400);
   }
 
   function hide() {

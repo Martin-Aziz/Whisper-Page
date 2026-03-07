@@ -37,11 +37,10 @@ export default function StatusBar() {
   return (
     <footer
       className={cn(
-        "flex items-center justify-between gap-4 px-3",
-        "border-t border-[var(--color-border)]",
-        "bg-[var(--color-surface-elevated)]",
-        "text-[var(--color-text-muted)] text-xs",
-        "h-[var(--statusbar-height)]",
+        "flex items-center justify-between gap-4 px-4",
+        "bg-[var(--color-surface-elevated)]/50 backdrop-blur-sm",
+        "text-[var(--color-text-secondary)] text-xs font-medium",
+        "min-h-[var(--statusbar-height)] py-1.5",
         "select-none shrink-0"
       )}
       aria-label="Status bar"
@@ -74,9 +73,15 @@ export default function StatusBar() {
           </span>
         )}
 
-        <span>{wordCount.toLocaleString()} words</span>
-        <span>{characterCount.toLocaleString()} chars</span>
-        <span className="hidden sm:inline">{readingTime}</span>
+        <span className="bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+          {wordCount.toLocaleString()} words
+        </span>
+        <span className="bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+          {characterCount.toLocaleString()} chars
+        </span>
+        <span className="hidden sm:inline bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+          {readingTime}
+        </span>
 
         <span
           className={cn(
@@ -85,9 +90,9 @@ export default function StatusBar() {
               ? "bg-[var(--color-accent-muted)] text-[var(--color-accent)]"
               : "bg-[var(--color-surface-overlay)] text-[var(--color-text-secondary)]"
           )}
-          aria-label={`Editor mode: ${mode}`}
+          aria-label={`Editor mode: ${mode === "wysiwyg" ? "Rich Text" : mode}`}
         >
-          {mode === "wysiwyg" ? "WYSIWYG" : "Source"}
+          {mode === "wysiwyg" ? "Rich Text" : "Source"}
         </span>
       </div>
     </footer>
@@ -97,8 +102,8 @@ export default function StatusBar() {
 function formatSavedAgo(timestamp: number): string {
   const diffSeconds = Math.floor((Date.now() - timestamp) / 1000);
   if (diffSeconds < 5) return "just now";
-  if (diffSeconds < 60) return `${diffSeconds}s ago`;
+  if (diffSeconds < 60) return String(diffSeconds) + "s ago";
   const diffMins = Math.floor(diffSeconds / 60);
-  if (diffMins < 60) return `${diffMins}m ago`;
-  return `${Math.floor(diffMins / 60)}h ago`;
+  if (diffMins < 60) return String(diffMins) + "m ago";
+  return String(Math.floor(diffMins / 60)) + "h ago";
 }

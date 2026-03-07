@@ -19,6 +19,7 @@ describe("tauriService", () => {
       expect(result).toBe("/home/user/notes.md");
       expect(mockOpen).toHaveBeenCalledWith({
         multiple: false,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         filters: expect.arrayContaining([
           expect.objectContaining({ name: "Markdown" }),
         ]),
@@ -73,6 +74,7 @@ describe("tauriService", () => {
       await tauriService.savePdfPicker("doc.pdf");
       expect(mockSave).toHaveBeenCalledWith(
         expect.objectContaining({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           filters: expect.arrayContaining([
             expect.objectContaining({ name: "PDF Document" }),
           ]),

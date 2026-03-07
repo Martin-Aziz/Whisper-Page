@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 /** Editor mode determines which editing engine is active. */
-export type EditorMode = "wysiwyg" | "source";
+export type EditorMode = "wysiwyg" | "source" | "read-only";
 
 /** Which panel is splitting the view in source mode. */
 export type SplitMode = "off" | "preview-right";
@@ -74,9 +74,9 @@ export const useEditorStore = create<EditorState>()(
       setFocusMode: (isFocusMode) => set({ isFocusMode }),
       toggleSidebar: () =>
         set((s) => ({ isSidebarOpen: !s.isSidebarOpen })),
-      openExportModal: () => set({ isExportModalOpen: true }),
+      openExportModal: () => set({ isExportModalOpen: true, isTableModalOpen: false }),
       closeExportModal: () => set({ isExportModalOpen: false }),
-      openTableModal: () => set({ isTableModalOpen: true }),
+      openTableModal: () => set({ isTableModalOpen: true, isExportModalOpen: false }),
       closeTableModal: () => set({ isTableModalOpen: false }),
 
       setMarkdownContent: (content) =>

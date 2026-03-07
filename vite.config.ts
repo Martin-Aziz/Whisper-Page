@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
@@ -9,7 +9,7 @@ const host = process.env.TAURI_DEV_HOST;
  * Tauri uses a fixed port and expects the dev server on localhost.
  */
 export default defineConfig(() => {
-  const serverConfig: import("vite").UserConfig["server"] = {
+  const serverConfig: UserConfig["server"] = {
     port: 1420,
     strictPort: true,
     host: host || false,

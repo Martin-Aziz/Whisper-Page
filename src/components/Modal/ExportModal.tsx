@@ -3,7 +3,7 @@ import { X, FileDown, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
 import { useFileStore } from "@/store/fileStore";
 import { tauriService } from "@/services/tauriService";
-import { markdownToHtml } from "@/services/markdownService";
+import { markdownToHtmlAsync } from "@/services/markdownService";
 import Button from "@/components/common/Button";
 import { cn } from "@/utils/cn";
 
@@ -50,11 +50,12 @@ export default function ExportModal() {
     setErrorMessage("");
 
     try {
-      const htmlContent = markdownToHtml(markdownContent);
+      const htmlContent = await markdownToHtmlAsync(markdownContent);
+      const safeMargin = Math.max(0, Math.min(100, marginMm));
       const result = await tauriService.exportToPdf(htmlContent, {
         outputPath: path,
         pageSize,
-        marginMm,
+        marginMm: safeMargin,
         includePageNumbers,
       });
       setOutputPath(result.outputPath);
@@ -116,7 +117,7 @@ export default function ExportModal() {
                   {(["A4", "Letter", "Legal"] as PageSize[]).map((size) => (
                     <button
                       key={size}
-                      onClick={() => setPageSize(size)}
+                      onClick={() => { setPageSize(size); }}
                       className={cn(
                         "flex-1 py-2 rounded-lg text-sm font-medium border transition-colors",
                         pageSize === size
@@ -142,7 +143,7 @@ export default function ExportModal() {
                   max={40}
                   step={5}
                   value={marginMm}
-                  onChange={(e) => setMarginMm(Number(e.target.value))}
+                  onChange={(e) => { setMarginMm(Number(e.target.value)); }}
                   className="w-full accent-[var(--color-accent)]"
                 />
                 <div className="flex justify-between text-xs text-[var(--color-text-muted)] mt-1">
@@ -155,7 +156,7 @@ export default function ExportModal() {
                 <input
                   type="checkbox"
                   checked={includePageNumbers}
-                  onChange={(e) => setIncludePageNumbers(e.target.checked)}
+                  onChange={(e) => { setIncludePageNumbers(e.target.checked); }}
                   className="w-4 h-4 rounded accent-[var(--color-accent)]"
                 />
                 <span className="text-sm text-[var(--color-text-secondary)]">

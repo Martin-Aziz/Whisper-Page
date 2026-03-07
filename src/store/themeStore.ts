@@ -7,8 +7,10 @@ export interface ThemeState {
   theme: ThemeMode;
   /** Resolved to "light" or "dark" based on system if mode is "system" */
   resolvedTheme: "light" | "dark";
+  customBgColor: string | null;
   setTheme: (theme: ThemeMode) => void;
   setResolvedTheme: (resolved: "light" | "dark") => void;
+  setCustomBgColor: (color: string | null) => void;
 }
 
 /**
@@ -21,9 +23,11 @@ export const useThemeStore = create<ThemeState>()(
     (set) => ({
       theme: "system",
       resolvedTheme: "light",
+      customBgColor: null,
 
       setTheme: (theme) => set({ theme }),
       setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
+      setCustomBgColor: (customBgColor) => set({ customBgColor }),
     }),
     {
       name: "lumina-theme",

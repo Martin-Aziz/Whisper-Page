@@ -81,7 +81,7 @@ export const tauriService = {
    * @throws If the write fails (permissions, disk full, etc.)
    */
   async writeFile(path: string, content: string): Promise<void> {
-    await invoke<void>("write_file", { path, content });
+    await invoke("write_file", { path, content });
   },
 
   /** Returns true if the file exists on disk. */
@@ -115,7 +115,7 @@ export const tauriService = {
 
   /** Toggles the main window between fullscreen and windowed mode. */
   async toggleFullscreen(): Promise<void> {
-    await invoke<void>("toggle_fullscreen");
+    await invoke("toggle_fullscreen");
   },
 
   /**
@@ -125,6 +125,6 @@ export const tauriService = {
   async setWindowTitle(title: string): Promise<void> {
     // Guard: Tauri may not be available in browser-based dev/test environments
     if (typeof (window as Window & { __TAURI__?: unknown }).__TAURI__ === "undefined") return;
-    await invoke<void>("set_window_title", { title });
+    await invoke("set_window_title", { title });
   },
 };

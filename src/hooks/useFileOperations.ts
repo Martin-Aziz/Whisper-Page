@@ -12,7 +12,7 @@ import { extractDocumentTitle } from "@/services/markdownService";
  * const { openFile, saveFile } = useFileOperations();
  */
 export function useFileOperations() {
-  const { setMarkdownContent, markdownContent } = useEditorStore();
+  const { setMarkdownContent, markdownContent, setMode } = useEditorStore();
   const { currentFile, setCurrentFile, setDirty, recordSave, addRecentFile } =
     useFileStore();
 
@@ -30,11 +30,12 @@ export function useFileOperations() {
 
       setMarkdownContent(content);
       setCurrentFile(path);
+      setMode("read-only");
       addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
     } catch (err) {
       console.error("Failed to open file:", err);
     }
-  }, [setMarkdownContent, setCurrentFile, addRecentFile]);
+  }, [setMarkdownContent, setCurrentFile, addRecentFile, setMode]);
 
   /**
    * Opens the given path directly (e.g. from recent files list).
@@ -47,32 +48,14 @@ export function useFileOperations() {
 
         setMarkdownContent(content);
         setCurrentFile(path);
+        setMode("read-only");
         addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
       } catch (err) {
         console.error("Failed to open file path:", path, err);
       }
     },
-    [setMarkdownContent, setCurrentFile, addRecentFile]
+    [setMarkdownContent, setCurrentFile, addRecentFile, setMode]
   );
-
-  /**
-   * Saves the current content to disk.
-   * If no file is open yet, delegates to `saveFileAs`.
-   * Uses atomic write (write temp → rename) via the Rust backend.
-   */
-  const saveFile = useCallback(async () => {
-    if (!currentFile) {
-      await saveFileAs();
-      return;
-    }
-
-    try {
-      await tauriService.writeFile(currentFile, markdownContent);
-      recordSave();
-    } catch (err) {
-      console.error("Failed to save file:", err);
-    }
-  }, [currentFile, markdownContent, recordSave]);
 
   /**
    * Opens a save-as dialog and saves the current content to the chosen path.
@@ -96,6 +79,25 @@ export function useFileOperations() {
       console.error("Failed to save file as:", err);
     }
   }, [markdownContent, setCurrentFile, recordSave, addRecentFile]);
+
+  /**
+   * Saves the current content to disk.
+   * If no file is open yet, delegates to `saveFileAs`.
+   * Uses atomic write (write temp → rename) via the Rust backend.
+   */
+  const saveFile = useCallback(async () => {
+    if (!currentFile) {
+      await saveFileAs();
+      return;
+    }
+
+    try {
+      await tauriService.writeFile(currentFile, markdownContent);
+      recordSave();
+    } catch (err) {
+      console.error("Failed to save file:", err);
+    }
+  }, [currentFile, markdownContent, recordSave, saveFileAs]);
 
   /**
    * Creates a new empty document.

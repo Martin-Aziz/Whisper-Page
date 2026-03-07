@@ -14,9 +14,13 @@ import { cn } from "@/utils/cn";
  */
 export default function TableInsertModal() {
   const { closeTableModal, setMarkdownContent, markdownContent } = useEditorStore();
-  const [rows, setRows] = useState(3);
-  const [cols, setCols] = useState(3);
+  const [rowsStr, setRowsStr] = useState("3");
+  const [colsStr, setColsStr] = useState("3");
   const dialogRef = useRef<HTMLDialogElement>(null);
+
+  const parsedRows = parseInt(rowsStr, 10);
+  const parsedCols = parseInt(colsStr, 10);
+  const isValid = !isNaN(parsedRows) && parsedRows > 0 && !isNaN(parsedCols) && parsedCols > 0;
 
   // Focus trap & ESC to close
   useEffect(() => {
@@ -28,7 +32,7 @@ export default function TableInsertModal() {
   }
 
   function buildMarkdownTable(rows: number, cols: number): string {
-    const headerCells = Array.from({ length: cols }, (_, i) => `Column ${i + 1}`);
+    const headerCells = Array.from({ length: cols }, (_, i) => "Column " + String(i + 1));
     const separators = Array.from({ length: cols }, () => "---");
     const bodyRow = Array.from({ length: cols }, () => " ");
 
@@ -40,7 +44,8 @@ export default function TableInsertModal() {
   }
 
   function handleInsert() {
-    const tableMarkdown = buildMarkdownTable(rows, cols);
+    if (!isValid) return;
+    const tableMarkdown = buildMarkdownTable(Math.min(parsedRows, 100), Math.min(parsedCols, 50));
     setMarkdownContent(markdownContent + tableMarkdown);
     closeTableModal();
   }
@@ -89,8 +94,8 @@ export default function TableInsertModal() {
               type="number"
               min={1}
               max={50}
-              value={rows}
-              onChange={(e) => setRows(Math.max(1, Math.min(50, parseInt(e.target.value, 10) || 1)))}
+              value={rowsStr}
+              onChange={(e) => { setRowsStr(e.target.value); }}
               className={cn(
                 "w-full px-3 py-2 rounded-lg text-sm",
                 "bg-[var(--color-surface-elevated)] border border-[var(--color-border)]",
@@ -112,8 +117,8 @@ export default function TableInsertModal() {
               type="number"
               min={1}
               max={20}
-              value={cols}
-              onChange={(e) => setCols(Math.max(1, Math.min(20, parseInt(e.target.value, 10) || 1)))}
+              value={colsStr}
+              onChange={(e) => { setColsStr(e.target.value); }}
               className={cn(
                 "w-full px-3 py-2 rounded-lg text-sm",
                 "bg-[var(--color-surface-elevated)] border border-[var(--color-border)]",
@@ -126,14 +131,14 @@ export default function TableInsertModal() {
 
         {/* Preview */}
         <div className="mb-5 p-3 rounded-lg bg-[var(--color-surface-elevated)] overflow-hidden">
-          <TablePreview rows={Math.min(rows, 4)} cols={Math.min(cols, 5)} />
+          <TablePreview rows={isValid ? Math.min(parsedRows, 4) : 1} cols={isValid ? Math.min(parsedCols, 5) : 1} />
         </div>
 
         <div className="flex justify-end gap-2">
           <Button variant="outline" size="md" onClick={closeTableModal}>
             Cancel
           </Button>
-          <Button variant="solid" size="md" onClick={handleInsert}>
+          <Button variant="solid" size="md" onClick={handleInsert} disabled={!isValid}>
             Insert Table
           </Button>
         </div>

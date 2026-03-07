@@ -2,6 +2,7 @@ import { FileText, Trash2 } from "lucide-react";
 import { useFileStore } from "@/store/fileStore";
 import { useFileOperations } from "@/hooks/useFileOperations";
 import Button from "@/components/common/Button";
+import Tooltip from "@/components/common/Tooltip";
 import { cn } from "@/utils/cn";
 
 /**
@@ -18,10 +19,10 @@ export default function Sidebar() {
     const diffMs = Date.now() - unixSeconds * 1000;
     const diffMins = Math.floor(diffMs / 60_000);
     if (diffMins < 1) return "just now";
-    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffMins < 60) return String(diffMins) + "m ago";
     const diffHours = Math.floor(diffMins / 60);
-    if (diffHours < 24) return `${diffHours}h ago`;
-    return `${Math.floor(diffHours / 24)}d ago`;
+    if (diffHours < 24) return String(diffHours) + "h ago";
+    return String(Math.floor(diffHours / 24)) + "d ago";
   }
 
   return (
@@ -61,7 +62,7 @@ export default function Sidebar() {
                   "transition-colors duration-100",
                   "hover:bg-[var(--color-surface-overlay)]",
                   isOpen &&
-                    "bg-[var(--color-accent-muted)] text-[var(--color-accent)]"
+                  "bg-[var(--color-accent-muted)] text-[var(--color-accent)]"
                 )}
                 aria-current={isOpen ? "page" : undefined}
               >
@@ -86,15 +87,17 @@ export default function Sidebar() {
 
       {recentFiles.length > 0 && (
         <div className="px-3 py-2 border-t border-[var(--color-border)]">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="w-full justify-start text-[var(--color-text-muted)]"
-            onClick={() => useFileStore.getState().clearRecentFiles()}
-          >
-            <Trash2 size={13} className="mr-1.5" />
-            Clear history
-          </Button>
+          <Tooltip content="Clear Sidebar History">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-[var(--color-text-muted)]"
+              onClick={() => { useFileStore.getState().clearRecentFiles(); }}
+            >
+              <Trash2 size={13} className="mr-1.5" />
+              Clear history
+            </Button>
+          </Tooltip>
         </div>
       )}
     </aside>

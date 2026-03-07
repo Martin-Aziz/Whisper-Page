@@ -30,7 +30,7 @@ interface WysiwygEditorProps {
 }
 
 /**
- * WYSIWYG editor powered by TipTap (ProseMirror).
+ * Rich Text editor powered by TipTap (ProseMirror).
  * Renders markdown as rich text; syntax is hidden behind the rendered output.
  *
  * Syncs bidirectionally with the editor Zustand store:
@@ -76,9 +76,39 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, WysiwygEditorProps>(
           class: "editor-content outline-none",
           spellcheck: "true",
         },
+        handleDrop: (_view, event, _slice, moved) => {
+          if (!moved && event.dataTransfer && event.dataTransfer.files.length) {
+            const file = event.dataTransfer.files[0];
+            if (file && file.type.startsWith("image/")) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const src = e.target?.result as string;
+                if (editor) editor.commands.setImage({ src });
+              };
+              reader.readAsDataURL(file);
+              return true;
+            }
+          }
+          return false;
+        },
+        handlePaste: (_view, event) => {
+          if (event.clipboardData && event.clipboardData.files.length) {
+            const file = event.clipboardData.files[0];
+            if (file && file.type.startsWith("image/")) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const src = e.target?.result as string;
+                if (editor) editor.commands.setImage({ src });
+              };
+              reader.readAsDataURL(file);
+              return true;
+            }
+          }
+          return false;
+        },
       },
       onUpdate: ({ editor }) => {
-        // We store HTML in the WYSIWYG side for re-render fidelity;
+        // We store HTML in the Rich Text side for re-render fidelity;
         // source-mode receives markdown from the store.
         const html = editor.getHTML();
         setMarkdownContent(html);
@@ -90,7 +120,7 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, WysiwygEditorProps>(
     useEffect(() => {
       if (!editor) return;
       const currentContent = editor.getHTML();
-      if (currentContent !== markdownContent && markdownContent !== undefined) {
+      if (currentContent !== markdownContent) {
         editor.commands.setContent(markdownContent, false);
       }
     }, [markdownContent, editor]);

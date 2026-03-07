@@ -1,9 +1,10 @@
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import WysiwygEditor from "./WysiwygEditor";
 import SourceEditor from "./SourceEditor";
 import { useEditorStore } from "@/store/editorStore";
-import { markdownToHtml } from "@/services/markdownService";
+import { markdownToHtmlAsync } from "@/services/markdownService";
 import { cn } from "@/utils/cn";
+import { PenLine, Focus } from "lucide-react";
 
 /**
  * Smart container that renders the correct editor engine based on the
@@ -18,11 +19,17 @@ import { cn } from "@/utils/cn";
  */
 export default function EditorContainer() {
   const { mode, splitMode, isFocusMode, markdownContent } = useEditorStore();
+  const [html, setHtml] = useState("");
   const wysiwygRef = useRef(null);
+
+  useEffect(() => {
+    markdownToHtmlAsync(markdownContent).then(setHtml).catch(console.error);
+  }, [markdownContent]);
 
   const showWysiwyg = mode === "wysiwyg";
   const showSource = mode === "source";
   const showPreview = showSource && splitMode === "preview-right";
+  const showReadOnly = mode === "read-only";
 
   return (
     <main
@@ -31,7 +38,20 @@ export default function EditorContainer() {
         isFocusMode && "focus-mode"
       )}
     >
-      {/* WYSIWYG mode */}
+      {/* Focus Mode Exit Overlay */}
+      {isFocusMode && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
+          <button
+            onClick={() => { useEditorStore.getState().setFocusMode(false); }}
+            className="bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm border border-[var(--color-border)]"
+          >
+            <Focus className="w-4 h-4 text-[var(--color-accent)]" />
+            Exit Focus
+          </button>
+        </div>
+      )}
+
+      {/* Rich Text mode */}
       {showWysiwyg && (
         <div className="editor-scroll flex-1 overflow-y-auto px-6 py-10">
           <div
@@ -62,11 +82,30 @@ export default function EditorContainer() {
             <div className="flex-1 overflow-y-auto px-6 py-10 bg-[var(--color-surface)]">
               <article
                 className="editor-content mx-auto max-w-[780px] prose"
-                dangerouslySetInnerHTML={{ __html: markdownToHtml(markdownContent) }}
+                dangerouslySetInnerHTML={{ __html: html }}
               />
             </div>
           )}
         </>
+      )}
+
+      {/* Read-Only mode */}
+      {showReadOnly && (
+        <div className="flex-1 overflow-y-auto px-6 py-10 bg-[var(--color-surface)] relative group">
+          <div className="sticky top-4 right-4 ml-auto w-max z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => { useEditorStore.getState().setMode("wysiwyg"); }}
+              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-full cursor-pointer shadow-md cute-bounce flex items-center gap-2 font-medium"
+            >
+              <PenLine className="w-4 h-4" />
+              Edit Document
+            </button>
+          </div>
+          <article
+            className="editor-content mx-auto max-w-[780px] prose prose-slate"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+        </div>
       )}
     </main>
   );

@@ -20,6 +20,11 @@ fn init_logging() {
         .init();
 }
 
+#[tauri::command]
+fn get_launch_args() -> Vec<String> {
+    std::env::args().collect()
+}
+
 /// Main application entry point called from `main.rs`.
 /// Registers all Tauri plugins and IPC command handlers.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -31,7 +36,6 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .plugin(tauri_plugin_updater::Builder::default().build())
         .invoke_handler(tauri::generate_handler![
             file_commands::read_file,
             file_commands::write_file,
@@ -40,6 +44,7 @@ pub fn run() {
             pdf_commands::export_to_pdf,
             window_commands::toggle_fullscreen,
             window_commands::set_window_title,
+            get_launch_args,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Lumina application");

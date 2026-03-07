@@ -18,7 +18,7 @@ export function useTheme() {
       document.documentElement.classList.toggle("dark", isDark);
       document.documentElement.classList.add("theme-transition");
       window.setTimeout(
-        () => document.documentElement.classList.remove("theme-transition"),
+        () => { document.documentElement.classList.remove("theme-transition"); },
         300
       );
       setResolvedTheme(isDark ? "dark" : "light");
@@ -31,6 +31,6 @@ export function useTheme() {
     };
 
     mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
+    return () => { mediaQuery.removeEventListener("change", handler); };
   }, [theme, setResolvedTheme]);
 }
