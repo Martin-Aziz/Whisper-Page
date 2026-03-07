@@ -30,7 +30,8 @@ export function useFileOperations() {
 
       setMarkdownContent(content);
       setCurrentFile(path);
-      setMode("read-only");
+      const isHtml = name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".htm");
+      setMode(isHtml ? "source" : "read-only");
       addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
     } catch (err) {
       console.error("Failed to open file:", err);
@@ -52,7 +53,9 @@ export function useFileOperations() {
           entry.name &&
           (entry.name.toLowerCase().endsWith(".md") ||
             entry.name.toLowerCase().endsWith(".markdown") ||
-            entry.name.toLowerCase().endsWith(".txt"))
+            entry.name.toLowerCase().endsWith(".txt") ||
+            entry.name.toLowerCase().endsWith(".html") ||
+            entry.name.toLowerCase().endsWith(".htm"))
         )
         .map((entry) => ({
           name: entry.name,
@@ -80,7 +83,8 @@ export function useFileOperations() {
 
         setMarkdownContent(content);
         setCurrentFile(path);
-        setMode("read-only");
+        const isHtml = name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".htm");
+        setMode(isHtml ? "source" : "read-only");
         addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
       } catch (err) {
         console.error("Failed to open file path:", path, err);
@@ -94,9 +98,12 @@ export function useFileOperations() {
    * Derives a suggested filename from the document's first heading.
    */
   const saveFileAs = useCallback(async () => {
+    const isHtml = currentFile?.toLowerCase().endsWith(".html") || currentFile?.toLowerCase().endsWith(".htm");
+    const extension = isHtml ? ".html" : ".md";
+
     const suggestedName =
       extractDocumentTitle(markdownContent).replace(/[/\\:*?"<>|]/g, "_") +
-      ".md";
+      extension;
 
     const path = await tauriService.saveFilePicker(suggestedName);
     if (!path) return;
@@ -110,7 +117,7 @@ export function useFileOperations() {
     } catch (err) {
       console.error("Failed to save file as:", err);
     }
-  }, [markdownContent, setCurrentFile, recordSave, addRecentFile]);
+  }, [currentFile, markdownContent, setCurrentFile, recordSave, addRecentFile]);
 
   /**
    * Saves the current content to disk.

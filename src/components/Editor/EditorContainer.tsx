@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import WysiwygEditor from "./WysiwygEditor";
 import SourceEditor from "./SourceEditor";
 import { useEditorStore } from "@/store/editorStore";
+import { useFileStore } from "@/store/fileStore";
 import { markdownToHtmlAsync } from "@/services/markdownService";
 import { cn } from "@/utils/cn";
 import { PenLine, Focus } from "lucide-react";
@@ -19,12 +20,19 @@ import { PenLine, Focus } from "lucide-react";
  */
 export default function EditorContainer() {
   const { mode, splitMode, isFocusMode, markdownContent } = useEditorStore();
+  const { currentFile } = useFileStore();
   const [html, setHtml] = useState("");
   const wysiwygRef = useRef(null);
 
+  const isHtmlFile = currentFile?.toLowerCase().endsWith(".html") || currentFile?.toLowerCase().endsWith(".htm");
+
   useEffect(() => {
-    markdownToHtmlAsync(markdownContent).then(setHtml).catch(console.error);
-  }, [markdownContent]);
+    if (isHtmlFile) {
+      setHtml(markdownContent);
+    } else {
+      markdownToHtmlAsync(markdownContent).then(setHtml).catch(console.error);
+    }
+  }, [markdownContent, isHtmlFile]);
 
   const showWysiwyg = mode === "wysiwyg";
   const showSource = mode === "source";

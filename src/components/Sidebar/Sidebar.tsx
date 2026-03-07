@@ -47,7 +47,7 @@ export default function Sidebar() {
               <span className="truncate">{currentFolder.split('/').pop() || currentFolder.split('\\').pop() || "Folder"}</span>
             </h2>
             <Tooltip content="Close Folder">
-              <button onClick={() => useFileStore.getState().setFolder(null, [])} className="text-[var(--color-text-muted)] hover:text-red-400 transition-colors">
+              <button onClick={() => { useFileStore.getState().setFolder(null, []); }} className="text-[var(--color-text-muted)] hover:text-red-400 transition-colors">
                 <X size={12} />
               </button>
             </Tooltip>

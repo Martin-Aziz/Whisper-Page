@@ -39,8 +39,9 @@ export default function ExportModal() {
   }
 
   async function handleExport() {
+    const isHtml = currentFile?.toLowerCase().endsWith(".html") || currentFile?.toLowerCase().endsWith(".htm");
     const suggestedName = currentFile
-      ? (currentFile.split("/").pop() ?? "document").replace(/\.(md|markdown)$/i, ".pdf")
+      ? (currentFile.split("/").pop() ?? "document").replace(/\.(md|markdown|html|htm)$/i, ".pdf")
       : "document.pdf";
 
     const path = await tauriService.savePdfPicker(suggestedName);
@@ -50,7 +51,7 @@ export default function ExportModal() {
     setErrorMessage("");
 
     try {
-      const htmlContent = await markdownToHtmlAsync(markdownContent);
+      const htmlContent = isHtml ? markdownContent : await markdownToHtmlAsync(markdownContent);
       const safeMargin = Math.max(0, Math.min(100, marginMm));
       const result = await tauriService.exportToPdf(htmlContent, {
         outputPath: path,

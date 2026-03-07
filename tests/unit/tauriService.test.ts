@@ -21,7 +21,7 @@ describe("tauriService", () => {
         multiple: false,
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         filters: expect.arrayContaining([
-          expect.objectContaining({ name: "Markdown" }),
+          expect.objectContaining({ name: "Markdown or HTML" }),
         ]),
       });
     });

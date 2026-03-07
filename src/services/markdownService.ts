@@ -7,12 +7,17 @@ marked.use({
   breaks: false,
 });
 
-// Web Worker instance for markdown parsing
-// Vite handles this URL syntax for worker bundling.
-const worker = new Worker(
-  new URL("../workers/markdownWorker.ts", import.meta.url),
-  { type: "module" }
-);
+let worker: Worker | null = null;
+
+function getWorker(): Worker | null {
+  if (!worker && typeof window !== "undefined" && typeof Worker !== "undefined") {
+    worker = new Worker(
+      new URL("../workers/markdownWorker.ts", import.meta.url),
+      { type: "module" }
+    );
+  }
+  return worker;
+}
 
 /**
  * Converts markdown source text to sanitized HTML asynchronously using a Web Worker.
@@ -23,24 +28,38 @@ const worker = new Worker(
  */
 export function markdownToHtmlAsync(markdown: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    const handleMessage = (event: MessageEvent) => {
-      const { html, error, success } = event.data as { html: string; error: string; success: boolean };
-      worker.removeEventListener("message", handleMessage);
-
-      if (success) {
-        // Sanitize on the main thread where DOMPurify has access to the DOM
-        const sanitized = DOMPurify.sanitize(html, {
-          ADD_TAGS: ["math", "semantics", "mrow", "mi", "mo", "mn", "msup"],
-          ADD_ATTR: ["class", "style", "xmlns"],
-        });
-        resolve(sanitized);
-      } else {
-        reject(new Error(error || "Worker failed"));
+    const tryProcess = () => {
+      const w = getWorker();
+      if (!w) {
+        // Fallback for tests/environments without Worker
+        try {
+          resolve(markdownToHtml(markdown));
+        } catch (e) {
+          reject(e instanceof Error ? e : new Error(String(e)));
+        }
+        return;
       }
+
+      const handleMessage = (event: MessageEvent) => {
+        const { html, error, success } = event.data as { html: string; error: string; success: boolean };
+        w.removeEventListener("message", handleMessage);
+
+        if (success) {
+          const sanitized = DOMPurify.sanitize(html, {
+            ADD_TAGS: ["math", "semantics", "mrow", "mi", "mo", "mn", "msup"],
+            ADD_ATTR: ["class", "style", "xmlns"],
+          });
+          resolve(sanitized);
+        } else {
+          reject(new Error(error || "Worker failed"));
+        }
+      };
+
+      w.addEventListener("message", handleMessage);
+      w.postMessage(markdown);
     };
 
-    worker.addEventListener("message", handleMessage);
-    worker.postMessage(markdown);
+    tryProcess();
   });
 }
 
