@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.tauri.app/config/2/capability",
+  "identifier": "default",
+  "description": "Default capabilities for Lumina editor",
+  "windows": ["main"],
+  "permissions": [
+    "core:path:default",
+    "core:event:default",
+    "core:window:default",
+    "core:app:default",
+    "core:resources:default",
+    "core:menu:default",
+    "core:tray:default",
+    "fs:default",
+    "fs:allow-read-text-file",
+    "fs:allow-write-text-file",
+    "fs:allow-create",
+    "fs:allow-exists",
+    "fs:allow-metadata",
+    "fs:allow-read-dir",
+    "fs:allow-open-path",
+    "dialog:default",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "shell:allow-open",
+    "window-state:default"
+  ]
+}

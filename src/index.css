@@ -1,0 +1,255 @@
+/*
+ * Lumina Global Styles
+ * Uses CSS custom properties for theming — switch themes by toggling classes on <html>.
+ * Tailwind provides utility classes; this file owns design tokens and base resets.
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Google Fonts ──────────────────────────────────────────────────────────── */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap");
+
+/* ─── Design Tokens: Light Theme ─────────────────────────────────────────── */
+:root {
+  --color-surface: #ffffff;
+  --color-surface-elevated: #f8f8f8;
+  --color-surface-overlay: #f0f0f0;
+  --color-border: #e0e0e0;
+  --color-border-subtle: #eeeeee;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #555555;
+  --color-text-muted: #999999;
+  --color-text-inverse: #ffffff;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-muted: #eff6ff;
+
+  /* Editor-specific */
+  --editor-max-width: 780px;
+  --editor-line-height: 1.75;
+  --editor-font-size: 17px;
+  --toolbar-height: 44px;
+  --statusbar-height: 28px;
+  --sidebar-width: 240px;
+}
+
+/* ─── Design Tokens: Dark Theme ──────────────────────────────────────────── */
+.dark {
+  --color-surface: #1e1e1e;
+  --color-surface-elevated: #252525;
+  --color-surface-overlay: #2d2d2d;
+  --color-border: #3d3d3d;
+  --color-border-subtle: #333333;
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #aaaaaa;
+  --color-text-muted: #666666;
+  --color-text-inverse: #1a1a1a;
+  --color-accent: #3b82f6;
+  --color-accent-hover: #60a5fa;
+  --color-accent-muted: #1e3a5f;
+}
+
+/* ─── Base Resets ─────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none; /* Text selection controlled per region */
+}
+
+/* ─── Layout Shells ───────────────────────────────────────────────────────── */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.editor-area {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─── Editor Typography ───────────────────────────────────────────────────── */
+.editor-content {
+  user-select: text;
+  font-family: "Merriweather", Georgia, serif;
+  font-size: var(--editor-font-size);
+  line-height: var(--editor-line-height);
+  color: var(--color-text-primary);
+  caret-color: var(--color-accent);
+}
+
+.editor-content h1 { font-size: 2em; font-weight: 700; margin: 1.2em 0 0.5em; }
+.editor-content h2 { font-size: 1.6em; font-weight: 700; margin: 1.2em 0 0.5em; }
+.editor-content h3 { font-size: 1.3em; font-weight: 700; margin: 1.2em 0 0.5em; }
+.editor-content h4 { font-size: 1.1em; font-weight: 600; margin: 1em 0 0.4em; }
+.editor-content h5 { font-size: 1em;   font-weight: 600; margin: 1em 0 0.4em; }
+.editor-content h6 { font-size: 0.9em; font-weight: 600; margin: 1em 0 0.4em; color: var(--color-text-secondary); }
+.editor-content p  { margin: 0 0 0.9em; }
+
+.editor-content strong { font-weight: 700; }
+.editor-content em     { font-style: italic; }
+.editor-content s      { text-decoration: line-through; opacity: 0.6; }
+
+.editor-content a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.editor-content code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.88em;
+  background: var(--color-surface-overlay);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+.editor-content pre {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 1em 1.2em;
+  overflow-x: auto;
+  margin: 1.2em 0;
+}
+
+.editor-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+.editor-content blockquote {
+  border-left: 4px solid var(--color-accent);
+  margin: 1.2em 0;
+  padding: 0.6em 1.2em;
+  color: var(--color-text-secondary);
+  background: var(--color-accent-muted);
+  border-radius: 0 6px 6px 0;
+}
+
+.editor-content ul, .editor-content ol {
+  padding-left: 1.8em;
+  margin-bottom: 0.9em;
+}
+
+.editor-content li + li { margin-top: 0.25em; }
+
+/* Task list */
+.editor-content ul[data-type="taskList"] { padding-left: 0.4em; list-style: none; }
+.editor-content li[data-type="taskItem"] { display: flex; align-items: baseline; gap: 0.5em; }
+.editor-content li[data-type="taskItem"] input { margin-top: 0.2em; accent-color: var(--color-accent); }
+
+/* Table */
+.editor-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.2em 0;
+  font-size: 0.95em;
+}
+
+.editor-content th, .editor-content td {
+  border: 1px solid var(--color-border);
+  padding: 8px 14px;
+  text-align: left;
+}
+
+.editor-content th {
+  background: var(--color-surface-elevated);
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+.editor-content tr:nth-child(even) td {
+  background: var(--color-surface-elevated);
+}
+
+/* Horizontal rule */
+.editor-content hr {
+  border: none;
+  border-top: 2px solid var(--color-border);
+  margin: 2em 0;
+}
+
+/* Images */
+.editor-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 0.8em 0;
+}
+
+/* KaTeX Math */
+.editor-content .katex-display {
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+/* ─── TipTap Placeholder ─────────────────────────────────────────────────── */
+.editor-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  color: var(--color-text-muted);
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
+
+/* ─── TipTap Selection ───────────────────────────────────────────────────── */
+.editor-content .ProseMirror-selectednode {
+  outline: 2px solid var(--color-accent);
+  border-radius: 4px;
+}
+
+/* ─── Focus Mode ──────────────────────────────────────────────────────────── */
+.focus-mode .app-shell > :not(.editor-area) { opacity: 0; pointer-events: none; }
+.focus-mode .sidebar { display: none; }
+.focus-mode .editor-scroll {
+  padding: 10vh 0;
+}
+.focus-mode .editor-inner {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* Typewriter effect: dim all paragraphs except the active one */
+.focus-mode .editor-content p:not(:focus-within) {
+  opacity: 0.45;
+  transition: opacity 200ms;
+}
+.focus-mode .editor-content p:focus-within {
+  opacity: 1;
+}
+
+/* ─── Scrollbars ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ─── Transitions ─────────────────────────────────────────────────────────── */
+.theme-transition, .theme-transition * {
+  transition: background-color 200ms, border-color 200ms, color 200ms !important;
+}

@@ -1,0 +1,32 @@
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+
+export type ThemeMode = "light" | "dark" | "system";
+
+export interface ThemeState {
+  theme: ThemeMode;
+  /** Resolved to "light" or "dark" based on system if mode is "system" */
+  resolvedTheme: "light" | "dark";
+  setTheme: (theme: ThemeMode) => void;
+  setResolvedTheme: (resolved: "light" | "dark") => void;
+}
+
+/**
+ * Theme preference store.
+ * Persists the user's theme choice. Actual DOM class toggling is handled
+ * by the `useTheme` hook which subscribes to this store.
+ */
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set) => ({
+      theme: "system",
+      resolvedTheme: "light",
+
+      setTheme: (theme) => set({ theme }),
+      setResolvedTheme: (resolvedTheme) => set({ resolvedTheme }),
+    }),
+    {
+      name: "lumina-theme",
+    }
+  )
+);
