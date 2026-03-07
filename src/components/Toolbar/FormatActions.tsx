@@ -17,7 +17,7 @@ import {
 import { useEditorStore } from "@/store/editorStore";
 import Tooltip from "@/components/common/Tooltip";
 import Button from "@/components/common/Button";
-import { Separator } from "./ToolbarSeparator";
+import { Separator } from "./Separator";
 
 export function FormatActions() {
     const { openTableModal } = useEditorStore();

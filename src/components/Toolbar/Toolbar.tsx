@@ -3,7 +3,7 @@ import { useEditorStore } from "@/store/editorStore";
 import Button from "@/components/common/Button";
 import Tooltip from "@/components/common/Tooltip";
 import { cn } from "@/utils/cn";
-import { Separator } from "./ToolbarSeparator";
+import { Separator } from "./Separator";
 
 import { FileActions } from "./FileActions";
 import { FormatActions } from "./FormatActions";

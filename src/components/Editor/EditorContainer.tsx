@@ -19,7 +19,7 @@ import { PenLine, Focus } from "lucide-react";
  * @layer Component
  */
 export default function EditorContainer() {
-  const { mode, splitMode, isFocusMode, markdownContent } = useEditorStore();
+  const { mode, splitMode, isFocusMode, isFullscreenHtml, markdownContent } = useEditorStore();
   const { currentFile } = useFileStore();
   const [html, setHtml] = useState("");
   const wysiwygRef = useRef(null);
@@ -87,11 +87,48 @@ export default function EditorContainer() {
 
           {/* Live preview pane */}
           {showPreview && (
-            <div className="flex-1 min-h-0 overflow-y-auto px-6 py-10 bg-[var(--color-surface)] custom-scrollbar">
-              <article
-                className="editor-content mx-auto max-w-[780px] prose"
-                dangerouslySetInnerHTML={{ __html: html }}
-              />
+            <div
+              className={cn(
+                "custom-scrollbar",
+                isFullscreenHtml
+                  ? "fixed inset-0 z-[100] bg-[var(--color-surface)] p-0 m-0"
+                  : "flex-1 min-h-0 overflow-y-auto px-6 py-10 bg-[var(--color-surface)]"
+              )}
+            >
+              {isHtmlFile ? (
+                <div className="relative w-full h-full">
+                  <iframe
+                    id="html-preview-frame"
+                    className="w-full h-full border-none bg-white rounded-xl shadow-sm"
+                    srcDoc={html}
+                    sandbox="allow-scripts allow-same-origin"
+                    title="HTML Preview"
+                  />
+                  <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    <button
+                      onClick={() => { useEditorStore.getState().setFullscreenHtml(!isFullscreenHtml); }}
+                      className="bg-black/70 hover:bg-black text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-lg font-medium text-sm transition-all flex items-center gap-2"
+                    >
+                      <Focus className="w-4 h-4" />
+                      {isFullscreenHtml ? "Exit Fullscreen" : "Fullscreen"}
+                    </button>
+                    {isFullscreenHtml && (
+                      <button
+                        onClick={() => { useEditorStore.getState().setMode("read-only"); useEditorStore.getState().setFullscreenHtml(false); }}
+                        className="bg-blue-600/90 hover:bg-blue-600 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-lg font-medium text-sm transition-all flex items-center gap-2"
+                      >
+                        <PenLine className="w-4 h-4" />
+                        Read Mode
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <article
+                  className="editor-content mx-auto max-w-[780px] prose"
+                  dangerouslySetInnerHTML={{ __html: html }}
+                />
+              )}
             </div>
           )}
         </>
@@ -99,21 +136,56 @@ export default function EditorContainer() {
 
       {/* Read-Only mode */}
       {showReadOnly && (
-        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-10 relative group bg-transparent custom-scrollbar">
-          <div className="sticky top-4 right-4 ml-auto w-max z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              onClick={() => { useEditorStore.getState().setMode("wysiwyg"); }}
-              className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
-            >
-              <PenLine className="w-4 h-4 text-[var(--color-accent)]" />
-              Edit Document
-            </button>
+        <div
+          className={cn(
+            "custom-scrollbar relative group transition-all",
+            isFullscreenHtml
+              ? "fixed inset-0 z-[100] bg-[var(--color-surface)] p-0 m-0"
+              : "flex-1 min-h-0 overflow-y-auto px-6 py-10 bg-transparent"
+          )}
+        >
+          <div className="sticky top-4 right-4 ml-auto w-max z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+            {isHtmlFile && (
+              <button
+                onClick={() => { useEditorStore.getState().setFullscreenHtml(!isFullscreenHtml); }}
+                className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
+              >
+                <Focus className="w-4 h-4 text-[var(--color-accent)]" />
+                {isFullscreenHtml ? "Exit Fullscreen" : "Fullscreen"}
+              </button>
+            )}
+            {!isFullscreenHtml && (
+              <button
+                onClick={() => { useEditorStore.getState().setMode("wysiwyg"); }}
+                className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
+              >
+                <PenLine className="w-4 h-4 text-[var(--color-accent)]" />
+                Edit Document
+              </button>
+            )}
           </div>
-          <div className="book-reader-page mx-auto max-w-[800px] min-h-[80vh] px-12 py-16 rounded-xl shadow-2xl border border-[var(--color-border)] mb-10 transition-all">
-            <article
-              className="editor-content prose prose-slate max-w-none"
-              dangerouslySetInnerHTML={{ __html: html }}
-            />
+          <div
+            className={cn(
+              "mx-auto transition-all",
+              isFullscreenHtml
+                ? "w-full h-full max-w-none px-0 py-0 min-h-screen bg-white"
+                : "book-reader-page max-w-[800px] min-h-[80vh] px-12 py-16 rounded-xl shadow-2xl border border-[var(--color-border)] mb-10 bg-white"
+            )}
+          >
+            {isHtmlFile ? (
+              <iframe
+                id="html-preview-frame"
+                className="w-full h-full border-none min-h-[70vh]"
+                srcDoc={html}
+                sandbox="allow-scripts allow-same-origin allow-modals"
+                title="HTML View"
+              />
+            ) : (
+              <article
+                className="editor-content prose prose-slate max-w-none"
+                dangerouslySetInnerHTML={{ __html: html }}
+              />
+            )}
           </div>
         </div>
       )}

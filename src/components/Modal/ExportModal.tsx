@@ -40,6 +40,21 @@ export default function ExportModal() {
 
   async function handleExport() {
     const isHtml = currentFile?.toLowerCase().endsWith(".html") || currentFile?.toLowerCase().endsWith(".htm");
+
+    // For HTML files, we use the browser's native print-to-pdf dialog for 100% accurate CSS rendering
+    if (isHtml) {
+      const iframe = document.getElementById("html-preview-frame") as HTMLIFrameElement | null;
+      if (iframe && iframe.contentWindow) {
+        closeExportModal();
+        iframe.contentWindow.print();
+        return;
+      } else {
+        setErrorMessage("Could not locate the HTML preview frame for printing.");
+        setStatus("error");
+        return;
+      }
+    }
+
     const suggestedName = currentFile
       ? (currentFile.split("/").pop() ?? "document").replace(/\.(md|markdown|html|htm)$/i, ".pdf")
       : "document.pdf";
@@ -51,7 +66,7 @@ export default function ExportModal() {
     setErrorMessage("");
 
     try {
-      const htmlContent = isHtml ? markdownContent : await markdownToHtmlAsync(markdownContent);
+      const htmlContent = await markdownToHtmlAsync(markdownContent);
       const safeMargin = Math.max(0, Math.min(100, marginMm));
       const result = await tauriService.exportToPdf(htmlContent, {
         outputPath: path,

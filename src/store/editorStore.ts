@@ -17,6 +17,7 @@ export interface EditorState {
   isSidebarOpen: boolean;
   isExportModalOpen: boolean;
   isTableModalOpen: boolean;
+  isFullscreenHtml: boolean;
 
   // ── Content ─────────────────────────────────────────────────
   /** Raw markdown string (source of truth shared between modes) */
@@ -37,6 +38,7 @@ export interface EditorState {
   closeExportModal: () => void;
   openTableModal: () => void;
   closeTableModal: () => void;
+  setFullscreenHtml: (isFullscreen: boolean) => void;
   setMarkdownContent: (content: string) => void;
   setCursorPosition: (line: number, column: number) => void;
 }
@@ -63,6 +65,7 @@ export const useEditorStore = create<EditorState>()(
       isSidebarOpen: false,
       isExportModalOpen: false,
       isTableModalOpen: false,
+      isFullscreenHtml: false,
       markdownContent: "",
       wordCount: 0,
       characterCount: 0,
@@ -78,6 +81,9 @@ export const useEditorStore = create<EditorState>()(
       closeExportModal: () => set({ isExportModalOpen: false }),
       openTableModal: () => set({ isTableModalOpen: true, isExportModalOpen: false }),
       closeTableModal: () => set({ isTableModalOpen: false }),
+      setFullscreenHtml: (isFullscreenHtml) => {
+        set({ isFullscreenHtml });
+      },
 
       setMarkdownContent: (content) =>
         set({

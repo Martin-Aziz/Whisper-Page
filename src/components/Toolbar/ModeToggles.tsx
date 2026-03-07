@@ -3,7 +3,7 @@ import { useEditorStore } from "@/store/editorStore";
 import { useFileStore } from "@/store/fileStore";
 import Tooltip from "@/components/common/Tooltip";
 import Button from "@/components/common/Button";
-import { Separator } from "./ToolbarSeparator";
+import { Separator } from "./Separator";
 
 export function ModeToggles() {
     const { mode, setMode, splitMode, setSplitMode, isFocusMode, setFocusMode, openExportModal } = useEditorStore();
