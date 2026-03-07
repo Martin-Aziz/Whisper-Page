@@ -53,7 +53,7 @@ export default function EditorContainer() {
 
       {/* Rich Text mode */}
       {showWysiwyg && (
-        <div className="editor-scroll flex-1 overflow-y-auto px-6 py-10">
+        <div className="editor-scroll flex-1 min-h-0 overflow-y-auto px-6 py-10 custom-scrollbar">
           <div
             className={cn(
               "editor-inner mx-auto",
@@ -70,7 +70,7 @@ export default function EditorContainer() {
         <>
           <div
             className={cn(
-              "flex-1 overflow-hidden border-r border-[var(--color-border)]",
+              "flex-1 min-h-0 overflow-hidden border-r border-[var(--color-border)]",
               showPreview && "max-w-[50%]"
             )}
           >
@@ -79,7 +79,7 @@ export default function EditorContainer() {
 
           {/* Live preview pane */}
           {showPreview && (
-            <div className="flex-1 overflow-y-auto px-6 py-10 bg-[var(--color-surface)]">
+            <div className="flex-1 min-h-0 overflow-y-auto px-6 py-10 bg-[var(--color-surface)] custom-scrollbar">
               <article
                 className="editor-content mx-auto max-w-[780px] prose"
                 dangerouslySetInnerHTML={{ __html: html }}
@@ -91,20 +91,22 @@ export default function EditorContainer() {
 
       {/* Read-Only mode */}
       {showReadOnly && (
-        <div className="flex-1 overflow-y-auto px-6 py-10 bg-[var(--color-surface)] relative group">
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-10 relative group bg-transparent custom-scrollbar">
           <div className="sticky top-4 right-4 ml-auto w-max z-10 opacity-0 group-hover:opacity-100 transition-opacity">
             <button
               onClick={() => { useEditorStore.getState().setMode("wysiwyg"); }}
-              className="bg-sky-500 hover:bg-sky-600 text-white px-4 py-2 rounded-full cursor-pointer shadow-md cute-bounce flex items-center gap-2 font-medium"
+              className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
             >
-              <PenLine className="w-4 h-4" />
+              <PenLine className="w-4 h-4 text-[var(--color-accent)]" />
               Edit Document
             </button>
           </div>
-          <article
-            className="editor-content mx-auto max-w-[780px] prose prose-slate"
-            dangerouslySetInnerHTML={{ __html: html }}
-          />
+          <div className="book-reader-page mx-auto max-w-[800px] min-h-[80vh] px-12 py-16 rounded-xl shadow-2xl border border-[var(--color-border)] mb-10 transition-all">
+            <article
+              className="editor-content prose prose-slate max-w-none"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          </div>
         </div>
       )}
     </main>

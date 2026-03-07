@@ -73,13 +73,13 @@ export default function StatusBar() {
           </span>
         )}
 
-        <span className="bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+        <span className="bg-[var(--color-surface-overlay)]/40 px-2 py-0.5 rounded-full border border-[var(--color-border-subtle)] shadow-sm">
           {wordCount.toLocaleString()} words
         </span>
-        <span className="bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+        <span className="bg-[var(--color-surface-overlay)]/40 px-2 py-0.5 rounded-full border border-[var(--color-border-subtle)] shadow-sm">
           {characterCount.toLocaleString()} chars
         </span>
-        <span className="hidden sm:inline bg-white px-2 py-0.5 rounded-full border border-sky-100 shadow-sm text-sky-600">
+        <span className="hidden sm:inline bg-[var(--color-surface-overlay)]/40 px-2 py-0.5 rounded-full border border-[var(--color-border-subtle)] shadow-sm">
           {readingTime}
         </span>
 

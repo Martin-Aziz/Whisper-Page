@@ -88,11 +88,14 @@ export default function App() {
       className="app-shell"
       style={customBgColor ? { background: customBgColor, backgroundImage: "none" } : undefined}
     >
-      <Toolbar />
-
-      <div className="editor-area">
+      <div className="editor-area overflow-visible border-none bg-transparent shadow-none backdrop-blur-0">
         {isSidebarOpen && <Sidebar />}
-        <EditorContainer />
+        <div className="flex flex-col flex-1 min-w-0 h-full gap-2 overflow-hidden">
+          <Toolbar />
+          <div className="flex-1 min-h-0 overflow-hidden bg-[var(--color-surface)] backdrop-blur-3xl rounded-[28px] border border-[var(--color-border)] shadow-xl relative flex flex-col">
+            <EditorContainer />
+          </div>
+        </div>
       </div>
 
       <StatusBar />

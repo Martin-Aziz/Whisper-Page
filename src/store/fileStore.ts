@@ -8,9 +8,18 @@ export interface RecentFile {
   lastOpened: number;
 }
 
+export interface FolderFile {
+  name: string;
+  path: string;
+}
+
 export interface FileState {
   /** Absolute path to the currently open file, or null for untitled */
   currentFile: string | null;
+  /** Absolute path to the currently open folder, or null */
+  currentFolder: string | null;
+  /** List of markdown files in the current folder */
+  folderFiles: FolderFile[];
   /** Whether the in-memory content differs from the saved file */
   isDirty: boolean;
   /** Last save timestamp (Date.now()) */
@@ -20,6 +29,7 @@ export interface FileState {
 
   // ── Actions ─────────────────────────────────────────────────
   setCurrentFile: (path: string | null) => void;
+  setFolder: (folderPath: string | null, files: FolderFile[]) => void;
   setDirty: (dirty: boolean) => void;
   recordSave: () => void;
   addRecentFile: (file: RecentFile) => void;
@@ -37,12 +47,17 @@ export const useFileStore = create<FileState>()(
   persist(
     (set) => ({
       currentFile: null,
+      currentFolder: null,
+      folderFiles: [],
       isDirty: false,
       lastSavedAt: null,
       recentFiles: [],
 
       setCurrentFile: (currentFile) =>
         set({ currentFile, isDirty: false }),
+
+      setFolder: (currentFolder, folderFiles) =>
+        set({ currentFolder, folderFiles }),
 
       setDirty: (isDirty) => set({ isDirty }),
 

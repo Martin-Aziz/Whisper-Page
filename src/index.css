@@ -102,6 +102,7 @@ body {
     0 20px 50px -12px rgba(0, 0, 0, 0.1),
     0 0 0 1px var(--color-border);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
 }
 
 .editor-area:focus-within {
@@ -352,6 +353,27 @@ body {
   border-right: 1px solid var(--color-border);
 }
 
+/* ─── Reading Mode ────────────────────────────────────────────────────────── */
+.book-reader-page {
+  background: var(--color-surface-elevated);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.15),
+    0 0 0 1px var(--color-border);
+}
+
+.dark .book-reader-page {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.5),
+    0 0 0 1px var(--color-border);
+}
+
+.book-reader-page .editor-content {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
 .statusbar {
   background: var(--color-surface-elevated);
   backdrop-filter: blur(12px);
@@ -377,11 +399,31 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
-  border-radius: 3px;
+  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-muted);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, var(--color-accent), transparent);
+  border-radius: 20px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+  background-clip: content-box;
 }
 
 /* ─── Transitions ─────────────────────────────────────────────────────────── */

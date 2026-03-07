@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open as dialogOpen, save as dialogSave } from "@tauri-apps/plugin-dialog";
+import { readDir, type DirEntry } from "@tauri-apps/plugin-fs";
 
 /** Metadata returned from the Rust backend for a file. */
 export interface FileMetadata {
@@ -35,6 +36,11 @@ export const tauriService = {
    * @returns Absolute path of the selected file, or null if cancelled.
    */
   async openFilePicker(): Promise<string | null> {
+    if (typeof window === "undefined" || !(window as any).__TAURI_INTERNALS__) {
+      console.warn("Tauri not detected, using browser fallback for openFilePicker");
+      // Simulate file pick
+      return "demo/sample.md";
+    }
     const result = await dialogOpen({
       multiple: false,
       filters: [
@@ -43,6 +49,35 @@ export const tauriService = {
       ],
     });
     return typeof result === "string" ? result : null;
+  },
+
+  /**
+   * Opens a native folder picker.
+   * @returns Absolute path of the selected folder, or null if cancelled.
+   */
+  async openFolderPicker(): Promise<string | null> {
+    if (typeof window === "undefined" || !(window as any).__TAURI_INTERNALS__) {
+      console.warn("Tauri not detected, using browser fallback for openFolderPicker");
+      return "/Users/demo/Documents/Projects";
+    }
+    const result = await dialogOpen({
+      directory: true,
+      multiple: false,
+    });
+    return typeof result === "string" ? result : null;
+  },
+
+  /** Reads the entries of a given directory. */
+  async readDirectory(path: string): Promise<DirEntry[]> {
+    if (typeof window === "undefined" || !(window as any).__TAURI_INTERNALS__) {
+      return [
+        { name: "Welcome.md", isDirectory: false, isSymlink: false, isFile: true },
+        { name: "Guide.markdown", isDirectory: false, isSymlink: false, isFile: true },
+        { name: "Drafts", isDirectory: true, isSymlink: false, isFile: false },
+        { name: "notes.txt", isDirectory: false, isSymlink: false, isFile: true },
+      ];
+    }
+    return await readDir(path);
   },
 
   /**
@@ -73,6 +108,11 @@ export const tauriService = {
    * @throws If the path does not exist or is not readable.
    */
   async readFile(path: string): Promise<string> {
+    if (typeof window === "undefined" || !(window as any).__TAURI_INTERNALS__) {
+      if (path.endsWith("Welcome.md")) return "# Welcome to Lumina\n\nThis is a *simulated* file contents for browser testing.";
+      if (path.endsWith("Guide.markdown")) return "# User Guide\n\n1. Open folder\n2. Select file\n3. Enjoy!";
+      return "# New Document\n\nStart writing here...";
+    }
     return await invoke<string>("read_file", { path });
   },
 

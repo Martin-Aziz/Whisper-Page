@@ -1,4 +1,4 @@
-import type { ReactNode} from "react";
+import type { ReactNode } from "react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/utils/cn";
 
@@ -33,7 +33,8 @@ export default function Tooltip({
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function show() {
-    timeoutRef.current = setTimeout(() => { setVisible(true); }, 400);
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => { setVisible(true); }, 150);
   }
 
   function hide() {
@@ -61,7 +62,7 @@ export default function Tooltip({
         <div
           role="tooltip"
           className={cn(
-            "absolute z-50 pointer-events-none animate-fade-in",
+            "absolute z-[9999] pointer-events-none animate-fade-in",
             "flex items-center gap-1.5 whitespace-nowrap",
             "px-2 py-1 rounded-md text-xs font-medium",
             "bg-[var(--color-text-primary)] text-[var(--color-text-inverse)]",

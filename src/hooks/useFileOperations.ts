@@ -13,7 +13,7 @@ import { extractDocumentTitle } from "@/services/markdownService";
  */
 export function useFileOperations() {
   const { setMarkdownContent, markdownContent, setMode } = useEditorStore();
-  const { currentFile, setCurrentFile, setDirty, recordSave, addRecentFile } =
+  const { currentFile, setFolder, setCurrentFile, setDirty, recordSave, addRecentFile } =
     useFileStore();
 
   /**
@@ -36,6 +36,38 @@ export function useFileOperations() {
       console.error("Failed to open file:", err);
     }
   }, [setMarkdownContent, setCurrentFile, addRecentFile, setMode]);
+
+  /**
+   * Opens a folder picker and loads all markdown files into the sidebar.
+   */
+  const openFolder = useCallback(async () => {
+    const folderPath = await tauriService.openFolderPicker();
+    if (!folderPath) return;
+
+    try {
+      const entries = await tauriService.readDirectory(folderPath);
+      const mdFiles = entries
+        .filter((entry) =>
+          !entry.isDirectory &&
+          entry.name &&
+          (entry.name.toLowerCase().endsWith(".md") ||
+            entry.name.toLowerCase().endsWith(".markdown") ||
+            entry.name.toLowerCase().endsWith(".txt"))
+        )
+        .map((entry) => ({
+          name: entry.name,
+          // Handle both posix and windows paths loosely
+          path: folderPath.endsWith("/") || folderPath.endsWith("\\")
+            ? `${folderPath}${entry.name}`
+            : `${folderPath}/${entry.name}`
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      setFolder(folderPath, mdFiles);
+    } catch (err) {
+      console.error("Failed to open folder:", err);
+    }
+  }, [setFolder]);
 
   /**
    * Opens the given path directly (e.g. from recent files list).
@@ -110,5 +142,5 @@ export function useFileOperations() {
     setDirty(false);
   }, [setMarkdownContent, setCurrentFile, setDirty]);
 
-  return { openFile, openFilePath, saveFile, saveFileAs, newFile };
+  return { openFile, openFolder, openFilePath, saveFile, saveFileAs, newFile };
 }

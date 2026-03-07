@@ -28,6 +28,7 @@ import {
   Palette,
   RotateCcw,
   PanelLeft,
+  FolderPlus,
 } from "lucide-react";
 import { useEditorStore } from "@/store/editorStore";
 import { useThemeStore, type ThemeMode } from "@/store/themeStore";
@@ -60,7 +61,7 @@ export default function Toolbar() {
     isSidebarOpen,
   } = useEditorStore();
   const { theme, setTheme, customBgColor, setCustomBgColor } = useThemeStore();
-  const { newFile, openFile, saveFile } = useFileOperations();
+  const { newFile, openFile, openFolder, saveFile } = useFileOperations();
 
   const colorInputRef = useRef<HTMLInputElement>(null);
   const themeIcons: Record<ThemeMode, React.ReactNode> = {
@@ -81,9 +82,9 @@ export default function Toolbar() {
         "flex items-center gap-0.5 px-2 shrink-0 shadow-sm",
         "border border-[var(--color-border)] rounded-full",
         "bg-[var(--color-surface-elevated)]/80 backdrop-blur-md",
-        "h-[var(--toolbar-height)] mx-auto mt-2",
-        "w-max max-w-[calc(100%-2rem)]",
-        "overflow-x-auto hide-scrollbar",
+        "h-[40px] px-3",
+        "relative z-[100] overflow-visible",
+        "w-full max-w-[900px] mx-auto",
         isFocusMode && "opacity-0 pointer-events-none"
       )}
       aria-label="Editor toolbar"
@@ -114,6 +115,12 @@ export default function Toolbar() {
       <Tooltip content="Open file" shortcut="⌘O">
         <Button className="cute-bounce" variant="ghost" size="sm" onClick={() => void openFile()} aria-label="Open file">
           <FolderOpen size={16} />
+        </Button>
+      </Tooltip>
+
+      <Tooltip content="Open folder" shortcut="⌘⇧O">
+        <Button className="cute-bounce" variant="ghost" size="sm" onClick={() => void openFolder()} aria-label="Open folder">
+          <FolderPlus size={16} />
         </Button>
       </Tooltip>
 
