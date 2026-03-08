@@ -14,14 +14,31 @@ export function useTheme() {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     function applyTheme(prefersDark: boolean) {
-      const isDark = theme === "dark" || (theme === "system" && prefersDark);
-      document.documentElement.classList.toggle("dark", isDark);
+      const allThemeClasses = ["dark", "sunlit", "dusk", "moonlit"];
+      document.documentElement.classList.remove(...allThemeClasses);
+
+      let resolvedThemeClass: "light" | "dark" | "sunlit" | "dusk" | "moonlit" = "light";
+
+      if (theme === "system") {
+        resolvedThemeClass = prefersDark ? "dark" : "light";
+      } else {
+        resolvedThemeClass = theme;
+      }
+
+      if (resolvedThemeClass !== "light") {
+        document.documentElement.classList.add(resolvedThemeClass);
+      }
+
       document.documentElement.classList.add("theme-transition");
       window.setTimeout(
         () => { document.documentElement.classList.remove("theme-transition"); },
         300
       );
-      setResolvedTheme(isDark ? "dark" : "light");
+
+      // setResolvedTheme only accepts 'light' or 'dark' right now to drive CodeMirror base theme.
+      // We will map custom themes to light or dark base styles.
+      const isDarkBase = ["dark", "moonlit"].includes(resolvedThemeClass);
+      setResolvedTheme(isDarkBase ? "dark" : "light");
     }
 
     applyTheme(mediaQuery.matches);

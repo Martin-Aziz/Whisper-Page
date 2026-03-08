@@ -29,7 +29,10 @@ describe("EditorContainer", () => {
         render(<EditorContainer />);
 
         // Fast-path bypass is synchronous, so it renders immediately
-        expect(screen.getByText("Raw HTML")).toBeInTheDocument();
+        // The HTML content is injected into an iframe's srcdoc
+        const iframe = screen.getByTitle("HTML View");
+        expect(iframe).toBeInTheDocument();
+        expect(iframe.getAttribute("srcdoc")).toBe("<h1>Raw HTML</h1>");
         expect(markdownService.markdownToHtmlAsync).not.toHaveBeenCalled();
     });
 

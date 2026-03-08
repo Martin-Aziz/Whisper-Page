@@ -96,7 +96,7 @@ export const useEditorStore = create<EditorState>()(
         set({ cursorLine, cursorColumn }),
     }),
     {
-      name: "lumina-editor-prefs",
+      name: "whisper-page-editor-prefs",
       partialize: (state) => ({
         mode: state.mode,
         splitMode: state.splitMode,

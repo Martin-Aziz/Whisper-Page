@@ -13,9 +13,12 @@ export function ThemeSettings() {
         light: <Sun size={15} />,
         dark: <Moon size={15} />,
         system: <Laptop size={15} />,
+        sunlit: <Sun size={15} className="text-orange-400" />,
+        dusk: <Moon size={15} className="text-purple-400" />,
+        moonlit: <Moon size={15} className="text-blue-200" />,
     };
 
-    const themeOrder: ThemeMode[] = ["light", "dark", "system"];
+    const themeOrder: ThemeMode[] = ["light", "dark", "system", "sunlit", "dusk", "moonlit"];
 
     const nextTheme = () => {
         const idx = themeOrder.indexOf(theme);

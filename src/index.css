@@ -51,6 +51,114 @@
   --color-accent-muted: rgba(30, 58, 95, 0.5);
 }
 
+/* ─── Design Tokens: Sunlit Letter (daytime romance) ─────────────────────── */
+.sunlit {
+  --color-surface: rgba(255, 248, 225, 0.85);
+  /* #FFF8E1 */
+  --color-surface-elevated: rgba(255, 250, 235, 0.7);
+  --color-surface-overlay: rgba(255, 235, 205, 0.7);
+  --color-border: rgba(255, 218, 185, 0.5);
+  /* #FFDAB9 */
+  --color-border-subtle: rgba(255, 218, 185, 0.4);
+  --color-text-primary: #5c3317;
+  /* Warm cocoa */
+  --color-text-secondary: #8b5a2b;
+  --color-text-muted: #cd853f;
+  --color-text-inverse: #ffffff;
+  --color-accent: #ffdab9;
+  /* Peachy blush */
+  --color-accent-hover: #ffcba4;
+  --color-accent-muted: rgba(255, 218, 185, 0.4);
+}
+
+.sunlit body {
+  /* Faint paper texture overlay (tiny grain) */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+}
+
+.sunlit .editor-area {
+  border-radius: 36px;
+  /* Rounded corners everywhere */
+}
+
+.sunlit .editor-content {
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
+  /* Handwritten feeling */
+}
+
+/* ─── Design Tokens: Dusk Whisper (twilight magic) ───────────────────────── */
+.dusk {
+  --color-surface: rgba(232, 215, 245, 0.85);
+  /* #E8D7F5 */
+  --color-surface-elevated: rgba(240, 225, 250, 0.7);
+  --color-surface-overlay: rgba(220, 200, 235, 0.7);
+  --color-border: rgba(183, 110, 121, 0.5);
+  /* Rose gold #B76E79 */
+  --color-border-subtle: rgba(183, 110, 121, 0.4);
+  --color-text-primary: #4b2e5a;
+  /* Deep plum */
+  --color-text-secondary: #6a4b7c;
+  --color-text-muted: #8b6b9c;
+  --color-text-inverse: #ffffff;
+  --color-accent: #b76e79;
+  /* Rose gold */
+  --color-accent-hover: #c98893;
+  --color-accent-muted: rgba(183, 110, 121, 0.4);
+}
+
+.dusk .app-shell {
+  /* Soft vignette (edges fade to darker) */
+  box-shadow: inset 0 0 150px rgba(75, 46, 90, 0.2);
+}
+
+.dusk .editor-content a:hover,
+.dusk .cute-bounce:hover {
+  /* Subtle glow on hover */
+  text-shadow: 0 0 8px rgba(183, 110, 121, 0.8);
+  box-shadow: 0 0 12px rgba(183, 110, 121, 0.4);
+}
+
+/* ─── Design Tokens: Moonlit Ink (nighttime dream) ───────────────────────── */
+.moonlit {
+  --color-surface: rgba(15, 14, 26, 0.85);
+  /* #0F0E1A */
+  --color-surface-elevated: rgba(25, 24, 40, 0.7);
+  --color-surface-overlay: rgba(35, 34, 55, 0.7);
+  --color-border: rgba(184, 169, 204, 0.3);
+  /* Silver lilac #B8A9CC */
+  --color-border-subtle: rgba(184, 169, 204, 0.2);
+  --color-text-primary: #f5f5f0;
+  /* Pale moonlight */
+  --color-text-secondary: #dcdce0;
+  --color-text-muted: #b8a9cc;
+  --color-text-inverse: #0f0e1a;
+  --color-accent: #a0d8ef;
+  /* Faint cyan */
+  --color-accent-hover: #bde4f5;
+  --color-accent-muted: rgba(160, 216, 239, 0.2);
+}
+
+.moonlit body {
+  /* Starfield background */
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, #eee, rgba(0, 0, 0, 0)),
+    radial-gradient(1px 1px at 40px 70px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 90px 40px, #fff, rgba(0, 0, 0, 0)),
+    radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0, 0, 0, 0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+}
+
+.moonlit .editor-content {
+  /* Gentle glow behind text (like candlelight) */
+  text-shadow: 0 0 2px rgba(245, 245, 240, 0.3);
+}
+
+.moonlit .editor-content a {
+  /* Like stars */
+  text-shadow: 0 0 5px rgba(160, 216, 239, 0.8);
+}
+
 /* ─── Base Resets ─────────────────────────────────────────────────────────── */
 *,
 *::before,

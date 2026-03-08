@@ -81,7 +81,7 @@ export const useFileStore = create<FileState>()(
       clearRecentFiles: () => set({ recentFiles: [] }),
     }),
     {
-      name: "lumina-file-state",
+      name: "whisper-page-file-state",
       partialize: (state) => ({
         recentFiles: state.recentFiles,
       }),

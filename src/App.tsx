@@ -28,7 +28,7 @@ export default function App() {
   const { customBgColor } = useThemeStore();
   const { openFilePath } = useFileOperations();
 
-  // Handle OS file launching (e.g. "Open With" Lumina) and drag-drop
+  // Handle OS file launching (e.g. "Open With" Whisper Page) and drag-drop
   useEffect(() => {
     let unlistenDrop: (() => void) | undefined;
 
@@ -80,7 +80,7 @@ export default function App() {
       ? currentFile.split("/").pop() ?? currentFile.split("\\").pop() ?? "Untitled"
       : "Untitled";
     const prefix = isDirty ? "• " : "";
-    void tauriService.setWindowTitle(`${prefix}${fileName} — Lumina`);
+    void tauriService.setWindowTitle(`${prefix}${fileName} — Whisper Page`);
   }, [currentFile, isDirty]);
 
   return (

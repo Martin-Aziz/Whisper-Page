@@ -113,7 +113,7 @@ export const tauriService = {
   async readFile(path: string): Promise<string> {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
     if (typeof window === "undefined" || !(window as any).__TAURI_INTERNALS__ && process.env.NODE_ENV !== "test") {
-      if (path.endsWith("Welcome.md")) return "# Welcome to Lumina\n\nThis is a *simulated* file contents for browser testing.";
+      if (path.endsWith("Welcome.md")) return "# Welcome to Whisper Page\n\nThis is a *simulated* file contents for browser testing.";
       if (path.endsWith("Guide.markdown")) return "# User Guide\n\n1. Open folder\n2. Select file\n3. Enjoy!";
       return "# New Document\n\nStart writing here...";
     }
@@ -164,7 +164,7 @@ export const tauriService = {
 
   /**
    * Sets the OS window title.
-   * @param title - e.g. "• README.md — Lumina" (bullet = unsaved changes)
+   * @param title - e.g. "• README.md — Whisper Page" (bullet = unsaved changes)
    */
   async setWindowTitle(title: string): Promise<void> {
     // Guard: Tauri may not be available in browser-based dev/test environments

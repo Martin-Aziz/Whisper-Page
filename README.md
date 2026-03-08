@@ -1,4 +1,4 @@
-# Lumina
+# Whisper Page
 
 > **Write at the speed of thought** — A blazingly fast, beautiful local markdown editor built with Tauri + React.
 
@@ -9,9 +9,9 @@
 
 ## The Idea
 
-Lumina is a **local-first desktop markdown editor** that combines the editing experience of Typora with the performance of a native application. Your files are plain `.md` files on your filesystem — no proprietary database, no cloud lock-in, no subscription.
+Whisper Page is a **local-first desktop markdown editor** that combines the editing experience of Typora with the performance of a native application. Your files are plain `.md` files on your filesystem — no proprietary database, no cloud lock-in, no subscription.
 
-Built on [Tauri 2](https://tauri.app) (Rust backend) instead of Electron, Lumina uses **30–50 MB RAM** at idle versus 200–500 MB for Electron apps, starts in under 500ms, and ships as a ~10 MB binary.
+Built on [Tauri 2](https://tauri.app) (Rust backend) instead of Electron, Whisper Page uses **30–50 MB RAM** at idle versus 200–500 MB for Electron apps, starts in under 500ms, and ships as a ~10 MB binary.
 
 ---
 
@@ -167,7 +167,7 @@ lumina/
 
 | Editor | Startup | RAM (idle) | Bundle |
 |--------|---------|------------|--------|
-| **Lumina** | **~0.5s** | **~50MB** | **~10MB** |
+| **Whisper Page** | **~0.5s** | **~50MB** | **~10MB** |
 | Typora | ~1.5s | ~150MB | ~80MB |
 | Obsidian | ~2s | ~200MB | ~120MB |
 | VS Code | ~3s | ~300MB | ~200MB |

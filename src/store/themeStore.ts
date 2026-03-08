@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "light" | "dark" | "system" | "sunlit" | "dusk" | "moonlit";
 
 export interface ThemeState {
   theme: ThemeMode;
@@ -30,7 +30,7 @@ export const useThemeStore = create<ThemeState>()(
       setCustomBgColor: (customBgColor) => set({ customBgColor }),
     }),
     {
-      name: "lumina-theme",
+      name: "whisper-page-theme",
     }
   )
 );

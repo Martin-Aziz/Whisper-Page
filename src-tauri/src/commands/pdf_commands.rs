@@ -48,7 +48,7 @@ pub async fn export_to_pdf(
 
     // Write styled HTML to a named temp file so the WebView can load it
     let tmp_dir = tempfile::Builder::new()
-        .prefix("lumina-pdf-")
+        .prefix("whisper-page-pdf-")
         .tempdir_in(parent)
         .map_err(|e| format!("Failed to create temp directory: {}", e))?;
 
@@ -105,7 +105,7 @@ fn build_print_html(body_html: &str, options: &PdfOptions) -> String {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lumina Export</title>
+  <title>Whisper Page Export</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
     @page {{

@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "identifier": "com.lumina.editor",
-  "productName": "Lumina",
+  "identifier": "com.whisperpage.editor",
+  "productName": "Whisper Page",
   "version": "1.0.0",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "Lumina",
+        "title": "Whisper Page",
         "width": 1280,
         "height": 800,
         "minWidth": 800,
@@ -60,10 +60,10 @@
         "role": "Editor"
       }
     ],
-    "publisher": "Lumina Contributors",
-    "copyright": "© 2025 Lumina Contributors. MIT License.",
+    "publisher": "Whisper Page Contributors",
+    "copyright": "© 2025 Whisper Page Contributors. MIT License.",
     "category": "Productivity",
     "shortDescription": "A blazingly fast, beautiful local markdown editor",
-    "longDescription": "Lumina is a high-performance local markdown editor that combines true WYSIWYG editing, beautiful themes, and professional PDF export—all while using a fraction of the memory of Electron-based alternatives."
+    "longDescription": "Whisper Page is a high-performance local markdown editor that combines true WYSIWYG editing, beautiful themes, and professional PDF export—all while using a fraction of the memory of Electron-based alternatives."
   }
 }
