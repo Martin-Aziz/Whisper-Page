@@ -14,7 +14,7 @@ import Typography from "@tiptap/extension-typography";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Underline from "@tiptap/extension-underline";
 import { createLowlight, all } from "lowlight";
-import { useEditorStore } from "@/store/editorStore";
+import { useEditorStore, type FormatCommand } from "@/store/editorStore";
 import { useFileStore } from "@/store/fileStore";
 
 const lowlight = createLowlight(all);
@@ -29,6 +29,35 @@ interface WysiwygEditorProps {
   className?: string;
 }
 
+function executeFormatCommand(editor: NonNullable<ReturnType<typeof useEditor>>, command: FormatCommand): boolean {
+  switch (command) {
+    case "bold":
+      return editor.chain().focus().toggleBold().run();
+    case "italic":
+      return editor.chain().focus().toggleItalic().run();
+    case "strike":
+      return editor.chain().focus().toggleStrike().run();
+    case "code":
+      return editor.chain().focus().toggleCode().run();
+    case "h1":
+      return editor.chain().focus().toggleHeading({ level: 1 }).run();
+    case "h2":
+      return editor.chain().focus().toggleHeading({ level: 2 }).run();
+    case "h3":
+      return editor.chain().focus().toggleHeading({ level: 3 }).run();
+    case "bulletList":
+      return editor.chain().focus().toggleBulletList().run();
+    case "orderedList":
+      return editor.chain().focus().toggleOrderedList().run();
+    case "taskList":
+      return editor.chain().focus().toggleTaskList().run();
+    case "blockquote":
+      return editor.chain().focus().toggleBlockquote().run();
+    default:
+      return false;
+  }
+}
+
 /**
  * Rich Text editor powered by TipTap (ProseMirror).
  * Renders markdown as rich text; syntax is hidden behind the rendered output.
@@ -41,7 +70,7 @@ interface WysiwygEditorProps {
  */
 const WysiwygEditor = forwardRef<WysiwygEditorHandle, WysiwygEditorProps>(
   ({ className }, ref) => {
-    const { markdownContent, setMarkdownContent } = useEditorStore();
+    const { markdownContent, setMarkdownContent, registerFormatCommandHandler } = useEditorStore();
     const { setDirty } = useFileStore();
 
     const editor = useEditor({
@@ -124,6 +153,20 @@ const WysiwygEditor = forwardRef<WysiwygEditorHandle, WysiwygEditorProps>(
         editor.commands.setContent(markdownContent, false);
       }
     }, [markdownContent, editor]);
+
+    // Register TipTap formatting commands for the toolbar while editor is mounted.
+    useEffect(() => {
+      if (!editor) {
+        registerFormatCommandHandler(null);
+        return;
+      }
+
+      registerFormatCommandHandler((command) => executeFormatCommand(editor, command));
+
+      return () => {
+        registerFormatCommandHandler(null);
+      };
+    }, [editor, registerFormatCommandHandler]);
 
     useImperativeHandle(ref, () => ({
       focus: () => editor?.commands.focus(),

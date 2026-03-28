@@ -14,105 +14,98 @@ import {
     Table,
     Image,
 } from "lucide-react";
-import { useEditorStore } from "@/store/editorStore";
+import type { ReactNode } from "react";
+import { useEditorStore, type FormatCommand } from "@/store/editorStore";
 import Tooltip from "@/components/common/Tooltip";
 import Button from "@/components/common/Button";
 import { Separator } from "./Separator";
 
 export function FormatActions() {
-    const { openTableModal } = useEditorStore();
+    const {
+        openTableModal,
+        runFormatCommand,
+        mode,
+        canRunFormatCommand,
+    } = useEditorStore();
+
+    const richTextCommandsEnabled = mode === "wysiwyg" && canRunFormatCommand;
+    const editingDisabledReason = mode === "read-only"
+        ? "Unavailable in read-only mode"
+        : "Rich Text mode only";
+
+    function renderFormatButton(
+        label: string,
+        command: FormatCommand,
+        icon: ReactNode,
+        shortcut?: string
+    ) {
+        const tooltipShortcut = richTextCommandsEnabled ? shortcut : undefined;
+
+        return (
+            <Tooltip
+                content={richTextCommandsEnabled ? label : `${label} (${editingDisabledReason})`}
+                {...(tooltipShortcut ? { shortcut: tooltipShortcut } : {})}
+            >
+                <Button
+                    className="cute-bounce"
+                    variant="ghost"
+                    size="sm"
+                    aria-label={label}
+                    disabled={!richTextCommandsEnabled}
+                    onClick={() => {
+                        runFormatCommand(command);
+                    }}
+                >
+                    {icon}
+                </Button>
+            </Tooltip>
+        );
+    }
 
     return (
         <>
-            <Tooltip content="Bold" shortcut="⌘B">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Bold">
-                    <Bold size={15} />
-                </Button>
-            </Tooltip>
+            {renderFormatButton("Bold", "bold", <Bold size={15} />, "⌘B")}
+            {renderFormatButton("Italic", "italic", <Italic size={15} />, "⌘I")}
+            {renderFormatButton("Strikethrough", "strike", <Strikethrough size={15} />)}
+            {renderFormatButton("Inline code", "code", <Code size={15} />)}
 
-            <Tooltip content="Italic" shortcut="⌘I">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Italic">
-                    <Italic size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Strikethrough">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Strikethrough">
-                    <Strikethrough size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Inline code">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Code">
-                    <Code size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Insert link">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Link">
+            <Tooltip content="Insert link (Coming soon)">
+                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Link" disabled>
                     <Link size={15} />
                 </Button>
             </Tooltip>
 
             <Separator />
 
-            <Tooltip content="Heading 1">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Heading 1">
-                    <Heading1 size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Heading 2">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Heading 2">
-                    <Heading2 size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Heading 3">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Heading 3">
-                    <Heading3 size={15} />
-                </Button>
-            </Tooltip>
+            {renderFormatButton("Heading 1", "h1", <Heading1 size={15} />)}
+            {renderFormatButton("Heading 2", "h2", <Heading2 size={15} />)}
+            {renderFormatButton("Heading 3", "h3", <Heading3 size={15} />)}
 
             <Separator />
 
-            <Tooltip content="Bullet list">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Bullet list">
-                    <List size={15} />
-                </Button>
-            </Tooltip>
+            {renderFormatButton("Bullet list", "bulletList", <List size={15} />)}
+            {renderFormatButton("Numbered list", "orderedList", <ListOrdered size={15} />)}
+            {renderFormatButton("Task list", "taskList", <CheckSquare size={15} />)}
+            {renderFormatButton("Blockquote", "blockquote", <Quote size={15} />)}
 
-            <Tooltip content="Numbered list">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Numbered list">
-                    <ListOrdered size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Task list">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Task list">
-                    <CheckSquare size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Blockquote">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Blockquote">
-                    <Quote size={15} />
-                </Button>
-            </Tooltip>
-
-            <Tooltip content="Insert table" shortcut="⌘T">
+            <Tooltip
+                content={mode === "read-only" ? "Insert table (Unavailable in read-only mode)" : "Insert table"}
+                {...(mode === "read-only" ? {} : { shortcut: "⌘T" })}
+            >
                 <Button
                     variant="ghost"
                     size="sm"
+                    className="cute-bounce"
                     onClick={openTableModal}
                     aria-label="Insert table"
+                    disabled={mode === "read-only"}
                 >
                     <Table size={15} />
                 </Button>
             </Tooltip>
 
-            <Tooltip content="Insert image">
-                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Insert image">
+            <Tooltip content="Insert image (Coming soon)">
+                <Button className="cute-bounce" variant="ghost" size="sm" aria-label="Insert image" disabled>
                     <Image size={15} />
                 </Button>
             </Tooltip>

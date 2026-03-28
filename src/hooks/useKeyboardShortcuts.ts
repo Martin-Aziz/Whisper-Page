@@ -27,7 +27,7 @@ export function useKeyboardShortcuts() {
 
       if (mod && e.key === "n") {
         e.preventDefault();
-        newFile();
+        void newFile();
         return;
       }
 

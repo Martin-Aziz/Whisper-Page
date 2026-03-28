@@ -14,7 +14,7 @@ export function FileActions() {
     return (
         <>
             <Tooltip content="New file" shortcut="⌘N">
-                <Button className="cute-bounce" variant="ghost" size="sm" onClick={newFile} aria-label="New file">
+                <Button className="cute-bounce" variant="ghost" size="sm" onClick={() => void newFile()} aria-label="New file">
                     <FilePlus size={16} />
                 </Button>
             </Tooltip>

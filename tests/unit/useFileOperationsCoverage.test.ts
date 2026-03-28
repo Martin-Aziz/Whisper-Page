@@ -20,18 +20,18 @@ describe("useFileOperations: Extended Coverage", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         useEditorStore.setState({ markdownContent: "", mode: "wysiwyg", splitMode: "off" });
-        useFileStore.setState({ currentFile: null, folderFiles: [], recentFiles: [] });
+        useFileStore.setState({ currentFile: null, folderFiles: [], recentFiles: [], isDirty: false });
     });
 
     describe("newFile", () => {
-        it("resets editor and file state for a new file", () => {
+        it("resets editor and file state for a new file", async () => {
             useEditorStore.setState({ markdownContent: "existing content", splitMode: "preview-right" });
             useFileStore.setState({ currentFile: "/old/path.md" });
 
             const { result } = renderHook(() => useFileOperations());
 
-            act(() => {
-                result.current.newFile();
+            await act(async () => {
+                await result.current.newFile();
             });
 
             expect(useEditorStore.getState().markdownContent).toBe("");

@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use tauri::{command, AppHandle, Manager};
+use tauri::{command, AppHandle};
 use tracing::{error, info};
 
 /// Options controlling the PDF output format.
@@ -37,7 +37,7 @@ pub struct PdfResult {
 /// Returns a descriptive error string on failure.
 #[command]
 pub async fn export_to_pdf(
-    app: AppHandle,
+    _app: AppHandle,
     html_content: String,
     options: PdfOptions,
 ) -> Result<PdfResult, String> {

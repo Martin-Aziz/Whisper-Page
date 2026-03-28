@@ -20,7 +20,7 @@ describe("useFileOperations", () => {
     beforeEach(() => {
         vi.clearAllMocks();
         useEditorStore.setState({ markdownContent: "", mode: "wysiwyg" });
-        useFileStore.setState({ currentFile: null, folderFiles: [], recentFiles: [] });
+        useFileStore.setState({ currentFile: null, folderFiles: [], recentFiles: [], isDirty: false });
     });
 
     describe("openFile", () => {

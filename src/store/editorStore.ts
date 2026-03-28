@@ -7,6 +7,20 @@ export type EditorMode = "wysiwyg" | "source" | "read-only";
 /** Which panel is splitting the view in source mode. */
 export type SplitMode = "off" | "preview-right";
 
+/** Rich text formatting commands supported by the toolbar. */
+export type FormatCommand =
+  | "bold"
+  | "italic"
+  | "strike"
+  | "code"
+  | "h1"
+  | "h2"
+  | "h3"
+  | "bulletList"
+  | "orderedList"
+  | "taskList"
+  | "blockquote";
+
 export interface EditorState {
   // ── Mode ────────────────────────────────────────────────────
   mode: EditorMode;
@@ -18,6 +32,7 @@ export interface EditorState {
   isExportModalOpen: boolean;
   isTableModalOpen: boolean;
   isFullscreenHtml: boolean;
+  canRunFormatCommand: boolean;
 
   // ── Content ─────────────────────────────────────────────────
   /** Raw markdown string (source of truth shared between modes) */
@@ -41,6 +56,13 @@ export interface EditorState {
   setFullscreenHtml: (isFullscreen: boolean) => void;
   setMarkdownContent: (content: string) => void;
   setCursorPosition: (line: number, column: number) => void;
+  registerFormatCommandHandler: (
+    handler: ((command: FormatCommand) => boolean) | null
+  ) => void;
+  runFormatCommand: (command: FormatCommand) => boolean;
+
+  // Internal command bridge backing field.
+  _formatCommandHandler: ((command: FormatCommand) => boolean) | null;
 }
 
 function countWords(text: string): number {
@@ -58,7 +80,7 @@ function countWords(text: string): number {
  */
 export const useEditorStore = create<EditorState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       mode: "wysiwyg",
       splitMode: "off",
       isFocusMode: false,
@@ -66,11 +88,13 @@ export const useEditorStore = create<EditorState>()(
       isExportModalOpen: false,
       isTableModalOpen: false,
       isFullscreenHtml: false,
+      canRunFormatCommand: false,
       markdownContent: "",
       wordCount: 0,
       characterCount: 0,
       cursorLine: 1,
       cursorColumn: 1,
+      _formatCommandHandler: null,
 
       setMode: (mode) => set({ mode }),
       setSplitMode: (splitMode) => set({ splitMode }),
@@ -94,6 +118,18 @@ export const useEditorStore = create<EditorState>()(
 
       setCursorPosition: (cursorLine, cursorColumn) =>
         set({ cursorLine, cursorColumn }),
+
+      registerFormatCommandHandler: (_formatCommandHandler) =>
+        set({
+          _formatCommandHandler,
+          canRunFormatCommand: Boolean(_formatCommandHandler),
+        }),
+
+      runFormatCommand: (command) => {
+        const handler = get()._formatCommandHandler;
+        if (!handler) return false;
+        return handler(command);
+      },
     }),
     {
       name: "whisper-page-editor-prefs",

@@ -44,8 +44,10 @@ export default function App() {
               !arg.startsWith("--")
           );
           if (fileToOpen) {
-            await openFilePath(fileToOpen);
-            setMode("read-only");
+            const didOpen = await openFilePath(fileToOpen);
+            if (didOpen) {
+              setMode("read-only");
+            }
           }
         }
 
@@ -55,10 +57,15 @@ export default function App() {
           if (Array.isArray(payload.paths)) {
             const firstPath = payload.paths[0];
             if (firstPath) {
-              openFilePath(firstPath).catch((err: unknown) => {
-                console.error("Failed to open dropped file:", err);
-              });
-              setMode("read-only");
+              openFilePath(firstPath)
+                .then((didOpen) => {
+                  if (didOpen) {
+                    setMode("read-only");
+                  }
+                })
+                .catch((err: unknown) => {
+                  console.error("Failed to open dropped file:", err);
+                });
             }
           }
         });
@@ -73,6 +80,20 @@ export default function App() {
       if (unlistenDrop) unlistenDrop();
     };
   }, [openFilePath, setMode]);
+
+  // Warn before closing/reloading when there are unsaved changes.
+  useEffect(() => {
+    function handleBeforeUnload(event: BeforeUnloadEvent) {
+      if (!isDirty) return;
+
+      event.preventDefault();
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isDirty]);
 
   // Keep the OS window title in sync with current file state
   useEffect(() => {
