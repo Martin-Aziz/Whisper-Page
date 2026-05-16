@@ -98,7 +98,7 @@ export default function App() {
   // Keep the OS window title in sync with current file state
   useEffect(() => {
     const fileName = currentFile
-      ? currentFile.split("/").pop() ?? currentFile.split("\\").pop() ?? "Untitled"
+      ? currentFile.split(/[/\\]/).pop() ?? "Untitled"
       : "Untitled";
     const prefix = isDirty ? "• " : "";
     void tauriService.setWindowTitle(`${prefix}${fileName} — Whisper Page`);

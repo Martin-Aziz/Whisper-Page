@@ -12,7 +12,7 @@ import { cn } from "@/utils/cn";
  * @layer Component
  */
 export default function Sidebar() {
-  const { recentFiles, currentFile, currentFolder, folderFiles } = useFileStore();
+  const { recentFiles, currentFile, currentFolder, folderFiles, setFolder, clearRecentFiles } = useFileStore();
   const { openFilePath } = useFileOperations();
 
   function formatRelativeTime(unixSeconds: number): string {
@@ -44,10 +44,10 @@ export default function Sidebar() {
               title={currentFolder}
             >
               <Folder size={12} className="shrink-0" />
-              <span className="truncate">{currentFolder.split('/').pop() || currentFolder.split('\\').pop() || "Folder"}</span>
+              <span className="truncate">{currentFolder.split(/[/\\]/).pop() || "Folder"}</span>
             </h2>
             <Tooltip content="Close Folder">
-              <button onClick={() => { useFileStore.getState().setFolder(null, []); }} className="text-[var(--color-text-muted)] hover:text-red-400 transition-colors">
+              <button onClick={() => { setFolder(null, []); }} className="text-[var(--color-text-muted)] hover:text-red-400 transition-colors">
                 <X size={12} />
               </button>
             </Tooltip>
@@ -120,7 +120,7 @@ export default function Sidebar() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{shortName}</p>
                     <p className="text-xs text-[var(--color-text-muted)] truncate">
-                      {file.path.split("/").slice(-2, -1)[0] ?? ""}
+                      {file.path.split(/[/\\]/).slice(-2, -1)[0] ?? ""}
                     </p>
                   </div>
                   <span className="text-[10px] text-[var(--color-text-muted)] mt-0.5 shrink-0">
@@ -139,7 +139,7 @@ export default function Sidebar() {
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start text-[var(--color-text-muted)]"
-                onClick={() => { useFileStore.getState().clearRecentFiles(); }}
+                onClick={() => { clearRecentFiles(); }}
               >
                 <Trash2 size={13} className="mr-1.5" />
                 Clear history

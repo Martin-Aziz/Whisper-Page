@@ -43,6 +43,7 @@ export function markdownToHtmlAsync(markdown: string): Promise<string> {
       const handleMessage = (event: MessageEvent) => {
         const { html, error, success } = event.data as { html: string; error: string; success: boolean };
         w.removeEventListener("message", handleMessage);
+        w.onerror = null;
 
         if (success) {
           const sanitized = DOMPurify.sanitize(html, {
@@ -55,6 +56,13 @@ export function markdownToHtmlAsync(markdown: string): Promise<string> {
         }
       };
 
+      const handleError = (event: ErrorEvent) => {
+        w.removeEventListener("message", handleMessage);
+        w.onerror = null;
+        reject(new Error(event.message || "Worker crashed"));
+      };
+
+      w.onerror = handleError;
       w.addEventListener("message", handleMessage);
       w.postMessage(markdown);
     };

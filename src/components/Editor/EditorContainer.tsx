@@ -19,7 +19,7 @@ import { PenLine, Focus } from "lucide-react";
  * @layer Component
  */
 export default function EditorContainer() {
-  const { mode, splitMode, isFocusMode, isFullscreenHtml, markdownContent } = useEditorStore();
+  const { mode, splitMode, isFocusMode, isFullscreenHtml, markdownContent, setFocusMode, setFullscreenHtml, setMode } = useEditorStore();
   const { currentFile } = useFileStore();
   const [html, setHtml] = useState("");
   const wysiwygRef = useRef(null);
@@ -27,11 +27,15 @@ export default function EditorContainer() {
   const isHtmlFile = currentFile?.toLowerCase().endsWith(".html") || currentFile?.toLowerCase().endsWith(".htm");
 
   useEffect(() => {
+    let cancelled = false;
     if (isHtmlFile) {
       setHtml(markdownContent);
     } else {
-      markdownToHtmlAsync(markdownContent).then(setHtml).catch(console.error);
+      markdownToHtmlAsync(markdownContent)
+        .then((result) => { if (!cancelled) setHtml(result); })
+        .catch(console.error);
     }
+    return () => { cancelled = true; };
   }, [markdownContent, isHtmlFile]);
 
   const showWysiwyg = mode === "wysiwyg";
@@ -50,7 +54,7 @@ export default function EditorContainer() {
       {isFocusMode && (
         <div className="fixed bottom-6 right-6 z-50 animate-slide-up">
           <button
-            onClick={() => { useEditorStore.getState().setFocusMode(false); }}
+            onClick={() => { setFocusMode(false); }}
             className="bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm border border-[var(--color-border)]"
           >
             <Focus className="w-4 h-4 text-[var(--color-accent)]" />
@@ -106,7 +110,7 @@ export default function EditorContainer() {
                   />
                   <div className="absolute top-4 right-4 z-10 flex gap-2">
                     <button
-                      onClick={() => { useEditorStore.getState().setFullscreenHtml(!isFullscreenHtml); }}
+                      onClick={() => { setFullscreenHtml(!isFullscreenHtml); }}
                       className="bg-black/70 hover:bg-black text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-lg font-medium text-sm transition-all flex items-center gap-2"
                     >
                       <Focus className="w-4 h-4" />
@@ -114,7 +118,7 @@ export default function EditorContainer() {
                     </button>
                     {isFullscreenHtml && (
                       <button
-                        onClick={() => { useEditorStore.getState().setMode("read-only"); useEditorStore.getState().setFullscreenHtml(false); }}
+                        onClick={() => { setMode("read-only"); setFullscreenHtml(false); }}
                         className="bg-blue-600/90 hover:bg-blue-600 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-lg font-medium text-sm transition-all flex items-center gap-2"
                       >
                         <PenLine className="w-4 h-4" />
@@ -147,7 +151,7 @@ export default function EditorContainer() {
           <div className="sticky top-4 right-4 ml-auto w-max z-10 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
             {isHtmlFile && (
               <button
-                onClick={() => { useEditorStore.getState().setFullscreenHtml(!isFullscreenHtml); }}
+                onClick={() => { setFullscreenHtml(!isFullscreenHtml); }}
                 className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
               >
                 <Focus className="w-4 h-4 text-[var(--color-accent)]" />
@@ -156,7 +160,7 @@ export default function EditorContainer() {
             )}
             {!isFullscreenHtml && (
               <button
-                onClick={() => { useEditorStore.getState().setMode("wysiwyg"); }}
+                onClick={() => { setMode("wysiwyg"); }}
                 className="bg-[var(--color-surface-elevated)] backdrop-blur-md border border-[var(--color-border)] text-[var(--color-text-primary)] hover:bg-[var(--color-border-subtle)] px-4 py-2 rounded-full cursor-pointer shadow-lg cute-bounce flex items-center gap-2 font-medium text-sm transition-all"
               >
                 <PenLine className="w-4 h-4 text-[var(--color-accent)]" />
@@ -177,7 +181,7 @@ export default function EditorContainer() {
                 id="html-preview-frame"
                 className="w-full h-full border-none min-h-[70vh]"
                 srcDoc={html}
-                sandbox="allow-scripts allow-same-origin allow-modals"
+                sandbox="allow-scripts allow-same-origin"
                 title="HTML View"
               />
             ) : (

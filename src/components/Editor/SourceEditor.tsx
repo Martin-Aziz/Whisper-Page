@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { EditorView, basicSetup } from "codemirror";
-import { EditorState as CMState } from "@codemirror/state";
+import { EditorState as CMState, Compartment } from "@codemirror/state";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { oneDark } from "@codemirror/theme-one-dark";
@@ -22,6 +22,7 @@ import { useThemeStore } from "@/store/themeStore";
 export default function SourceEditor() {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
+  const themeCompartment = useRef(new Compartment());
 
   const { markdownContent, setMarkdownContent, setCursorPosition } = useEditorStore();
   const { setDirty } = useFileStore();
@@ -51,7 +52,7 @@ export default function SourceEditor() {
         const line = update.state.doc.lineAt(selection.head);
         setCursorPosition(line.number, selection.head - line.from + 1);
       }),
-      resolvedTheme === "dark" ? oneDark : [],
+      themeCompartment.current.of(resolvedTheme === "dark" ? oneDark : []),
     ];
 
     const state = CMState.create({
@@ -70,13 +71,15 @@ export default function SourceEditor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Sync theme changes by reconfiguring extensions (recreate view)
+  // Reconfigure theme extension without recreating the view (preserves undo history)
   useEffect(() => {
     const view = viewRef.current;
     if (!view) return;
 
     view.dispatch({
-      effects: [],
+      effects: themeCompartment.current.reconfigure(
+        resolvedTheme === "dark" ? oneDark : []
+      ),
     });
   }, [resolvedTheme]);
 

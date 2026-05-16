@@ -38,7 +38,7 @@ describe("useFileOperations", () => {
             expect(useEditorStore.getState().markdownContent).toBe("<h1>Hello</h1>");
         });
 
-        it("sets mode to read-only when opening a .md file", async () => {
+        it("sets mode to wysiwyg when opening a .md file", async () => {
             vi.mocked(tauriService.openFilePicker).mockResolvedValue("/path/to/notes.md");
             vi.mocked(tauriService.readFile).mockResolvedValue("# Hello");
 
@@ -48,7 +48,7 @@ describe("useFileOperations", () => {
                 await result.current.openFile();
             });
 
-            expect(useEditorStore.getState().mode).toBe("read-only");
+            expect(useEditorStore.getState().mode).toBe("wysiwyg");
         });
     });
 

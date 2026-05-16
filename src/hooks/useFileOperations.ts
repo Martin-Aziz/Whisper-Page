@@ -33,7 +33,7 @@ export function useFileOperations() {
 
     try {
       await tauriService.writeFile(path, markdownContent);
-      const name = path.split("/").pop() ?? "Untitled.md";
+      const name = path.split(/[/\\]/).pop() ?? "Untitled.md";
       setCurrentFile(path);
       recordSave();
       addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
@@ -100,12 +100,12 @@ export function useFileOperations() {
 
     try {
       const content = await tauriService.readFile(path);
-      const name = path.split("/").pop() ?? path.split("\\").pop() ?? "Untitled";
+      const name = path.split(/[/\\]/).pop() ?? "Untitled";
 
       setMarkdownContent(content);
       setCurrentFile(path);
       const isHtml = name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".htm");
-      setMode(isHtml ? "source" : "read-only");
+      setMode(isHtml ? "source" : "wysiwyg");
       addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
       return true;
     } catch (err) {
@@ -165,12 +165,12 @@ export function useFileOperations() {
 
       try {
         const content = await tauriService.readFile(path);
-        const name = path.split("/").pop() ?? path.split("\\").pop() ?? "Untitled";
+        const name = path.split(/[/\\]/).pop() ?? "Untitled";
 
         setMarkdownContent(content);
         setCurrentFile(path);
         const isHtml = name.toLowerCase().endsWith(".html") || name.toLowerCase().endsWith(".htm");
-        setMode(isHtml ? "source" : "read-only");
+        setMode(isHtml ? "source" : "wysiwyg");
         addRecentFile({ path, name, lastOpened: Math.floor(Date.now() / 1000) });
         return true;
       } catch (err) {
